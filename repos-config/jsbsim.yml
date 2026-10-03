@@ -1,0 +1,22 @@
+# Settings for JSBSim (https://github.com/JSBSim-Team/jsbsim)
+url: https://github.com/JSBSim-Team/jsbsim
+exclude:            # third-party code that ships inside the repo
+  - src/simgear/
+  - src/GeographicLib/
+  - python/           # Cython / Python.h bindings
+  - matlab/
+  - julia/
+  - UnrealEngine/
+  - check_cases/
+  - utils/            # aeromatic++ and simplot helper tools
+  - examples/
+noise_classes:
+  - FGLogging
+  - FGColumnVector3
+  - FGMatrix33
+  - FGQuaternion
+  - FGLocation
+entry_points:
+  - JSBSim::FGFDMExec::Run
+  - JSBSim::FGFDMExec::RunIC
+  - JSBSim::FGFDMExec::LoadModel

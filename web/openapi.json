@@ -1,0 +1,2846 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "aerotrace",
+    "description": "Call trees and data access for legacy code.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/status": {
+      "get": {
+        "summary": "Status",
+        "operationId": "status_api_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos": {
+      "get": {
+        "summary": "List Repos",
+        "operationId": "list_repos_api_repos_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RepoInfo"
+                  },
+                  "type": "array",
+                  "title": "Response 200 List Repos Api Repos Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos/{repo}/entry-points": {
+      "get": {
+        "summary": "Entry Points",
+        "operationId": "entry_points_api_repos__repo__entry_points_get",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntryPoint"
+                  },
+                  "title": "Response 200 Entry Points Api Repos  Repo  Entry Points Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos/{repo}/search": {
+      "get": {
+        "summary": "Search",
+        "operationId": "search_api_repos__repo__search_get",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 200,
+              "default": "",
+              "title": "Q"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos/{repo}/functions/{fid}": {
+      "get": {
+        "summary": "Function Detail",
+        "operationId": "function_detail_api_repos__repo__functions__fid__get",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          },
+          {
+            "name": "fid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Fid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FunctionDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos/{repo}/tree": {
+      "get": {
+        "summary": "Tree",
+        "operationId": "tree_api_repos__repo__tree_get",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          },
+          {
+            "name": "root",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Root"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "down",
+                "up"
+              ],
+              "type": "string",
+              "default": "down",
+              "title": "Direction"
+            }
+          },
+          {
+            "name": "depth",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 8,
+              "minimum": 1,
+              "default": 2,
+              "title": "Depth"
+            }
+          },
+          {
+            "name": "include_noise",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Noise"
+            }
+          },
+          {
+            "name": "include_may_call",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Include May Call"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos/{repo}/story/{fid}": {
+      "get": {
+        "summary": "Story",
+        "operationId": "story_api_repos__repo__story__fid__get",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          },
+          {
+            "name": "fid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Fid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos/{repo}/classes": {
+      "get": {
+        "summary": "List Classes",
+        "operationId": "list_classes_api_repos__repo__classes_get",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 200,
+              "default": "",
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Rollup"
+                  },
+                  "title": "Response 200 List Classes Api Repos  Repo  Classes Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos/{repo}/classes/{key}": {
+      "get": {
+        "summary": "Get Class Summary",
+        "operationId": "get_class_summary_api_repos__repo__classes__key__get",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          },
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RollupDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos/{repo}/files": {
+      "get": {
+        "summary": "List Files",
+        "operationId": "list_files_api_repos__repo__files_get",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 200,
+              "default": "",
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Rollup"
+                  },
+                  "title": "Response 200 List Files Api Repos  Repo  Files Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos/{repo}/files/{key}": {
+      "get": {
+        "summary": "Get File Summary",
+        "operationId": "get_file_summary_api_repos__repo__files__key__get",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          },
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RollupDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos/{repo}/fields/{fid}": {
+      "get": {
+        "summary": "Field Detail",
+        "operationId": "field_detail_api_repos__repo__fields__fid__get",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          },
+          {
+            "name": "fid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Fid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos/{repo}/impact/{fid}": {
+      "get": {
+        "summary": "Impact",
+        "operationId": "impact_api_repos__repo__impact__fid__get",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          },
+          {
+            "name": "fid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Fid"
+            }
+          },
+          {
+            "name": "depth",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1,
+              "default": 5,
+              "title": "Depth"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImpactResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos/{repo}/path": {
+      "get": {
+        "summary": "Call Path",
+        "operationId": "call_path_api_repos__repo__path_get",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Source"
+            }
+          },
+          {
+            "name": "target",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Target"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "down",
+                "up"
+              ],
+              "type": "string",
+              "default": "down",
+              "title": "Direction"
+            }
+          },
+          {
+            "name": "max_depth",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 30,
+              "minimum": 1,
+              "default": 12,
+              "title": "Max Depth"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PathResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/repos/{repo}/datamap": {
+      "get": {
+        "summary": "Datamap",
+        "operationId": "datamap_api_repos__repo__datamap_get",
+        "parameters": [
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Repo"
+            }
+          },
+          {
+            "name": "fn",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Fn"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "class",
+                    "file"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Scope"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataMapResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Callees": {
+        "properties": {
+          "calls": {
+            "items": {
+              "$ref": "#/components/schemas/FnWithEdge"
+            },
+            "type": "array",
+            "title": "Calls"
+          },
+          "may_call": {
+            "items": {
+              "$ref": "#/components/schemas/FnWithEdge"
+            },
+            "type": "array",
+            "title": "May Call"
+          }
+        },
+        "type": "object",
+        "required": [
+          "calls",
+          "may_call"
+        ],
+        "title": "Callees"
+      },
+      "DataMapAvailable": {
+        "properties": {
+          "class_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Class Name"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "class_name",
+          "file"
+        ],
+        "title": "DataMapAvailable"
+      },
+      "DataMapField": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "qualified_name": {
+            "type": "string",
+            "title": "Qualified Name"
+          },
+          "container": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "line": {
+            "type": "integer",
+            "title": "Line"
+          },
+          "writers": {
+            "type": "integer",
+            "title": "Writers"
+          },
+          "readers": {
+            "type": "integer",
+            "title": "Readers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "qualified_name",
+          "container",
+          "type",
+          "file",
+          "line",
+          "writers",
+          "readers"
+        ],
+        "title": "DataMapField"
+      },
+      "DataMapLink": {
+        "properties": {
+          "function_id": {
+            "type": "string",
+            "title": "Function Id"
+          },
+          "field_id": {
+            "type": "string",
+            "title": "Field Id"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "lines": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Lines"
+          }
+        },
+        "type": "object",
+        "required": [
+          "function_id",
+          "field_id",
+          "kind",
+          "count",
+          "lines"
+        ],
+        "title": "DataMapLink"
+      },
+      "DataMapResponse": {
+        "properties": {
+          "scope": {
+            "$ref": "#/components/schemas/DataMapScope"
+          },
+          "available": {
+            "$ref": "#/components/schemas/DataMapAvailable"
+          },
+          "functions": {
+            "items": {
+              "$ref": "#/components/schemas/FnBrief"
+            },
+            "type": "array",
+            "title": "Functions"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/DataMapField"
+            },
+            "type": "array",
+            "title": "Fields"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/DataMapLink"
+            },
+            "type": "array",
+            "title": "Links"
+          },
+          "truncated": {
+            "type": "boolean",
+            "title": "Truncated"
+          }
+        },
+        "type": "object",
+        "required": [
+          "scope",
+          "available",
+          "functions",
+          "fields",
+          "links",
+          "truncated"
+        ],
+        "title": "DataMapResponse"
+      },
+      "DataMapScope": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "key": {
+            "type": "string",
+            "title": "Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "key"
+        ],
+        "title": "DataMapScope"
+      },
+      "EdgeInfo": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "kinds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Kinds"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "lines": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Lines"
+          },
+          "dispatch": {
+            "type": "boolean",
+            "title": "Dispatch"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "kinds",
+          "count",
+          "lines",
+          "dispatch"
+        ],
+        "title": "EdgeInfo"
+      },
+      "EntryPoint": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "qualified_name": {
+            "type": "string",
+            "title": "Qualified Name"
+          },
+          "container": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "line_start": {
+            "type": "integer",
+            "title": "Line Start"
+          },
+          "line_end": {
+            "type": "integer",
+            "title": "Line End"
+          },
+          "is_virtual": {
+            "type": "boolean",
+            "title": "Is Virtual"
+          },
+          "is_pure_virtual": {
+            "type": "boolean",
+            "title": "Is Pure Virtual"
+          },
+          "is_entry_point": {
+            "type": "boolean",
+            "title": "Is Entry Point"
+          },
+          "is_noise": {
+            "type": "boolean",
+            "title": "Is Noise"
+          },
+          "noise_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Noise Reason"
+          },
+          "loc": {
+            "type": "integer",
+            "title": "Loc"
+          },
+          "fan_in": {
+            "type": "integer",
+            "title": "Fan In"
+          },
+          "fan_out": {
+            "type": "integer",
+            "title": "Fan Out"
+          },
+          "reach": {
+            "type": "integer",
+            "title": "Reach"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "summary_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Model"
+          },
+          "summary_verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Verified"
+          },
+          "fields_written_count": {
+            "type": "integer",
+            "title": "Fields Written Count"
+          },
+          "indirect_calls": {
+            "type": "integer",
+            "title": "Indirect Calls"
+          },
+          "rank": {
+            "type": "integer",
+            "title": "Rank"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "qualified_name",
+          "container",
+          "file",
+          "line_start",
+          "line_end",
+          "is_virtual",
+          "is_pure_virtual",
+          "is_entry_point",
+          "is_noise",
+          "noise_reason",
+          "loc",
+          "fan_in",
+          "fan_out",
+          "reach",
+          "summary",
+          "summary_model",
+          "summary_verified",
+          "fields_written_count",
+          "indirect_calls",
+          "rank"
+        ],
+        "title": "EntryPoint"
+      },
+      "FieldBrief": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "qualified_name": {
+            "type": "string",
+            "title": "Qualified Name"
+          },
+          "container": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "line": {
+            "type": "integer",
+            "title": "Line"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "qualified_name",
+          "container",
+          "type",
+          "file",
+          "line"
+        ],
+        "title": "FieldBrief"
+      },
+      "FieldDetail": {
+        "properties": {
+          "field": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Field"
+          },
+          "readers": {
+            "items": {
+              "$ref": "#/components/schemas/FnWithEdge"
+            },
+            "type": "array",
+            "title": "Readers"
+          },
+          "writers": {
+            "items": {
+              "$ref": "#/components/schemas/FnWithEdge"
+            },
+            "type": "array",
+            "title": "Writers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "readers",
+          "writers"
+        ],
+        "title": "FieldDetail"
+      },
+      "FieldUse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "qualified_name": {
+            "type": "string",
+            "title": "Qualified Name"
+          },
+          "container": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "line": {
+            "type": "integer",
+            "title": "Line"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "lines": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Lines"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "qualified_name",
+          "container",
+          "type",
+          "file",
+          "line",
+          "count",
+          "lines"
+        ],
+        "title": "FieldUse"
+      },
+      "FnBrief": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "qualified_name": {
+            "type": "string",
+            "title": "Qualified Name"
+          },
+          "container": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "line_start": {
+            "type": "integer",
+            "title": "Line Start"
+          },
+          "line_end": {
+            "type": "integer",
+            "title": "Line End"
+          },
+          "is_virtual": {
+            "type": "boolean",
+            "title": "Is Virtual"
+          },
+          "is_pure_virtual": {
+            "type": "boolean",
+            "title": "Is Pure Virtual"
+          },
+          "is_entry_point": {
+            "type": "boolean",
+            "title": "Is Entry Point"
+          },
+          "is_noise": {
+            "type": "boolean",
+            "title": "Is Noise"
+          },
+          "noise_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Noise Reason"
+          },
+          "loc": {
+            "type": "integer",
+            "title": "Loc"
+          },
+          "fan_in": {
+            "type": "integer",
+            "title": "Fan In"
+          },
+          "fan_out": {
+            "type": "integer",
+            "title": "Fan Out"
+          },
+          "reach": {
+            "type": "integer",
+            "title": "Reach"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "summary_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Model"
+          },
+          "summary_verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Verified"
+          },
+          "fields_written_count": {
+            "type": "integer",
+            "title": "Fields Written Count"
+          },
+          "indirect_calls": {
+            "type": "integer",
+            "title": "Indirect Calls"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "qualified_name",
+          "container",
+          "file",
+          "line_start",
+          "line_end",
+          "is_virtual",
+          "is_pure_virtual",
+          "is_entry_point",
+          "is_noise",
+          "noise_reason",
+          "loc",
+          "fan_in",
+          "fan_out",
+          "reach",
+          "summary",
+          "summary_model",
+          "summary_verified",
+          "fields_written_count",
+          "indirect_calls"
+        ],
+        "title": "FnBrief"
+      },
+      "FnWithEdge": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "kinds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Kinds"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "lines": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Lines"
+          },
+          "dispatch": {
+            "type": "boolean",
+            "title": "Dispatch"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "qualified_name": {
+            "type": "string",
+            "title": "Qualified Name"
+          },
+          "container": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "line_start": {
+            "type": "integer",
+            "title": "Line Start"
+          },
+          "line_end": {
+            "type": "integer",
+            "title": "Line End"
+          },
+          "is_virtual": {
+            "type": "boolean",
+            "title": "Is Virtual"
+          },
+          "is_pure_virtual": {
+            "type": "boolean",
+            "title": "Is Pure Virtual"
+          },
+          "is_entry_point": {
+            "type": "boolean",
+            "title": "Is Entry Point"
+          },
+          "is_noise": {
+            "type": "boolean",
+            "title": "Is Noise"
+          },
+          "noise_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Noise Reason"
+          },
+          "loc": {
+            "type": "integer",
+            "title": "Loc"
+          },
+          "fan_in": {
+            "type": "integer",
+            "title": "Fan In"
+          },
+          "fan_out": {
+            "type": "integer",
+            "title": "Fan Out"
+          },
+          "reach": {
+            "type": "integer",
+            "title": "Reach"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "summary_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Model"
+          },
+          "summary_verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Verified"
+          },
+          "fields_written_count": {
+            "type": "integer",
+            "title": "Fields Written Count"
+          },
+          "indirect_calls": {
+            "type": "integer",
+            "title": "Indirect Calls"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "kinds",
+          "count",
+          "lines",
+          "dispatch",
+          "id",
+          "name",
+          "qualified_name",
+          "container",
+          "file",
+          "line_start",
+          "line_end",
+          "is_virtual",
+          "is_pure_virtual",
+          "is_entry_point",
+          "is_noise",
+          "noise_reason",
+          "loc",
+          "fan_in",
+          "fan_out",
+          "reach",
+          "summary",
+          "summary_model",
+          "summary_verified",
+          "fields_written_count",
+          "indirect_calls"
+        ],
+        "title": "FnWithEdge"
+      },
+      "FunctionDetail": {
+        "properties": {
+          "node": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Node"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SummaryInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "callers": {
+            "items": {
+              "$ref": "#/components/schemas/FnWithEdge"
+            },
+            "type": "array",
+            "title": "Callers"
+          },
+          "callees": {
+            "$ref": "#/components/schemas/Callees"
+          },
+          "fields_read": {
+            "items": {
+              "$ref": "#/components/schemas/FieldUse"
+            },
+            "type": "array",
+            "title": "Fields Read"
+          },
+          "fields_written": {
+            "items": {
+              "$ref": "#/components/schemas/FieldUse"
+            },
+            "type": "array",
+            "title": "Fields Written"
+          },
+          "indirect_calls": {
+            "$ref": "#/components/schemas/IndirectCalls"
+          },
+          "overrides": {
+            "items": {
+              "$ref": "#/components/schemas/FnBrief"
+            },
+            "type": "array",
+            "title": "Overrides"
+          },
+          "overridden_by": {
+            "items": {
+              "$ref": "#/components/schemas/FnBrief"
+            },
+            "type": "array",
+            "title": "Overridden By"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceInfo"
+          },
+          "github_permalink": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Github Permalink"
+          }
+        },
+        "type": "object",
+        "required": [
+          "node",
+          "summary",
+          "callers",
+          "callees",
+          "fields_read",
+          "fields_written",
+          "indirect_calls",
+          "overrides",
+          "overridden_by",
+          "source",
+          "github_permalink"
+        ],
+        "title": "FunctionDetail"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ImpactFn": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "qualified_name": {
+            "type": "string",
+            "title": "Qualified Name"
+          },
+          "container": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "line_start": {
+            "type": "integer",
+            "title": "Line Start"
+          },
+          "line_end": {
+            "type": "integer",
+            "title": "Line End"
+          },
+          "is_virtual": {
+            "type": "boolean",
+            "title": "Is Virtual"
+          },
+          "is_pure_virtual": {
+            "type": "boolean",
+            "title": "Is Pure Virtual"
+          },
+          "is_entry_point": {
+            "type": "boolean",
+            "title": "Is Entry Point"
+          },
+          "is_noise": {
+            "type": "boolean",
+            "title": "Is Noise"
+          },
+          "noise_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Noise Reason"
+          },
+          "loc": {
+            "type": "integer",
+            "title": "Loc"
+          },
+          "fan_in": {
+            "type": "integer",
+            "title": "Fan In"
+          },
+          "fan_out": {
+            "type": "integer",
+            "title": "Fan Out"
+          },
+          "reach": {
+            "type": "integer",
+            "title": "Reach"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "summary_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Model"
+          },
+          "summary_verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Verified"
+          },
+          "fields_written_count": {
+            "type": "integer",
+            "title": "Fields Written Count"
+          },
+          "indirect_calls": {
+            "type": "integer",
+            "title": "Indirect Calls"
+          },
+          "calls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Calls"
+          },
+          "via": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Via"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "qualified_name",
+          "container",
+          "file",
+          "line_start",
+          "line_end",
+          "is_virtual",
+          "is_pure_virtual",
+          "is_entry_point",
+          "is_noise",
+          "noise_reason",
+          "loc",
+          "fan_in",
+          "fan_out",
+          "reach",
+          "summary",
+          "summary_model",
+          "summary_verified",
+          "fields_written_count",
+          "indirect_calls",
+          "calls",
+          "via"
+        ],
+        "title": "ImpactFn"
+      },
+      "ImpactLevel": {
+        "properties": {
+          "distance": {
+            "type": "integer",
+            "title": "Distance"
+          },
+          "functions": {
+            "items": {
+              "$ref": "#/components/schemas/ImpactFn"
+            },
+            "type": "array",
+            "title": "Functions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "distance",
+          "functions"
+        ],
+        "title": "ImpactLevel"
+      },
+      "ImpactResponse": {
+        "properties": {
+          "root": {
+            "$ref": "#/components/schemas/FnBrief"
+          },
+          "max_depth": {
+            "type": "integer",
+            "title": "Max Depth"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "levels": {
+            "items": {
+              "$ref": "#/components/schemas/ImpactLevel"
+            },
+            "type": "array",
+            "title": "Levels"
+          }
+        },
+        "type": "object",
+        "required": [
+          "root",
+          "max_depth",
+          "total",
+          "levels"
+        ],
+        "title": "ImpactResponse"
+      },
+      "IndirectCalls": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "lines": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Lines"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count",
+          "lines"
+        ],
+        "title": "IndirectCalls"
+      },
+      "PathResponse": {
+        "properties": {
+          "found": {
+            "type": "boolean",
+            "title": "Found"
+          },
+          "direction": {
+            "type": "string",
+            "title": "Direction"
+          },
+          "path": {
+            "items": {
+              "$ref": "#/components/schemas/FnBrief"
+            },
+            "type": "array",
+            "title": "Path"
+          }
+        },
+        "type": "object",
+        "required": [
+          "found",
+          "direction",
+          "path"
+        ],
+        "title": "PathResponse"
+      },
+      "RepoInfo": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "repo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Repo Url"
+          },
+          "commit_sha": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commit Sha"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "extracted_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extracted At"
+          },
+          "loaded_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Loaded At"
+          },
+          "stats": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Stats"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "summaries": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summaries"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "repo_url",
+          "commit_sha",
+          "language",
+          "extracted_at",
+          "loaded_at",
+          "stats",
+          "summaries",
+          "error"
+        ],
+        "title": "RepoInfo"
+      },
+      "Rollup": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "short": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Short"
+          },
+          "detailed": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detailed"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "short",
+          "detailed",
+          "model",
+          "created_at"
+        ],
+        "title": "Rollup"
+      },
+      "RollupDetail": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "short": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Short"
+          },
+          "detailed": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detailed"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "functions": {
+            "items": {
+              "$ref": "#/components/schemas/FnBrief"
+            },
+            "type": "array",
+            "title": "Functions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "short",
+          "detailed",
+          "model",
+          "created_at",
+          "functions"
+        ],
+        "title": "RollupDetail"
+      },
+      "SearchResponse": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "functions": {
+            "items": {
+              "$ref": "#/components/schemas/FnBrief"
+            },
+            "type": "array",
+            "title": "Functions"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/FieldBrief"
+            },
+            "type": "array",
+            "title": "Fields"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "functions",
+          "fields"
+        ],
+        "title": "SearchResponse"
+      },
+      "SourceInfo": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "start": {
+            "type": "integer",
+            "title": "Start"
+          },
+          "end": {
+            "type": "integer",
+            "title": "End"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "available": {
+            "type": "boolean",
+            "title": "Available"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file",
+          "start",
+          "end",
+          "code",
+          "available"
+        ],
+        "title": "SourceInfo"
+      },
+      "Stats": {
+        "properties": {
+          "nodes": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Nodes"
+          },
+          "edges": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Edges"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nodes",
+          "edges"
+        ],
+        "title": "Stats"
+      },
+      "StatusResponse": {
+        "properties": {
+          "offline": {
+            "type": "boolean",
+            "title": "Offline"
+          }
+        },
+        "type": "object",
+        "required": [
+          "offline"
+        ],
+        "title": "StatusResponse"
+      },
+      "StoryResponse": {
+        "properties": {
+          "function": {
+            "$ref": "#/components/schemas/FnBrief"
+          },
+          "story": {
+            "type": "string",
+            "title": "Story"
+          },
+          "steps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "function",
+          "story",
+          "steps",
+          "model",
+          "created_at"
+        ],
+        "title": "StoryResponse"
+      },
+      "SummaryInfo": {
+        "properties": {
+          "short": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Short"
+          },
+          "detailed": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detailed"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "inputs": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inputs"
+          },
+          "outputs": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outputs"
+          },
+          "side_effects": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Side Effects"
+          },
+          "mentions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Mentions"
+          },
+          "verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          }
+        },
+        "type": "object",
+        "required": [
+          "short",
+          "detailed",
+          "model",
+          "created_at",
+          "inputs",
+          "outputs",
+          "side_effects",
+          "mentions",
+          "verified",
+          "reasons"
+        ],
+        "title": "SummaryInfo"
+      },
+      "TreeNode": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "qualified_name": {
+            "type": "string",
+            "title": "Qualified Name"
+          },
+          "container": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "line_start": {
+            "type": "integer",
+            "title": "Line Start"
+          },
+          "line_end": {
+            "type": "integer",
+            "title": "Line End"
+          },
+          "is_virtual": {
+            "type": "boolean",
+            "title": "Is Virtual"
+          },
+          "is_pure_virtual": {
+            "type": "boolean",
+            "title": "Is Pure Virtual"
+          },
+          "is_entry_point": {
+            "type": "boolean",
+            "title": "Is Entry Point"
+          },
+          "is_noise": {
+            "type": "boolean",
+            "title": "Is Noise"
+          },
+          "noise_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Noise Reason"
+          },
+          "loc": {
+            "type": "integer",
+            "title": "Loc"
+          },
+          "fan_in": {
+            "type": "integer",
+            "title": "Fan In"
+          },
+          "fan_out": {
+            "type": "integer",
+            "title": "Fan Out"
+          },
+          "reach": {
+            "type": "integer",
+            "title": "Reach"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "summary_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Model"
+          },
+          "summary_verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Verified"
+          },
+          "fields_written_count": {
+            "type": "integer",
+            "title": "Fields Written Count"
+          },
+          "indirect_calls": {
+            "type": "integer",
+            "title": "Indirect Calls"
+          },
+          "path_id": {
+            "type": "string",
+            "title": "Path Id"
+          },
+          "edge": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EdgeInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cycle": {
+            "type": "boolean",
+            "title": "Cycle"
+          },
+          "has_more": {
+            "type": "boolean",
+            "title": "Has More"
+          },
+          "child_count": {
+            "type": "integer",
+            "title": "Child Count"
+          },
+          "hidden_count": {
+            "type": "integer",
+            "title": "Hidden Count"
+          },
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/TreeNode"
+            },
+            "type": "array",
+            "title": "Children"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "qualified_name",
+          "container",
+          "file",
+          "line_start",
+          "line_end",
+          "is_virtual",
+          "is_pure_virtual",
+          "is_entry_point",
+          "is_noise",
+          "noise_reason",
+          "loc",
+          "fan_in",
+          "fan_out",
+          "reach",
+          "summary",
+          "summary_model",
+          "summary_verified",
+          "fields_written_count",
+          "indirect_calls",
+          "path_id",
+          "edge",
+          "cycle",
+          "has_more",
+          "child_count",
+          "hidden_count",
+          "children"
+        ],
+        "title": "TreeNode"
+      },
+      "TreeResponse": {
+        "properties": {
+          "repo": {
+            "type": "string",
+            "title": "Repo"
+          },
+          "direction": {
+            "type": "string",
+            "title": "Direction"
+          },
+          "depth": {
+            "type": "integer",
+            "title": "Depth"
+          },
+          "include_noise": {
+            "type": "boolean",
+            "title": "Include Noise"
+          },
+          "include_may_call": {
+            "type": "boolean",
+            "title": "Include May Call"
+          },
+          "root": {
+            "$ref": "#/components/schemas/TreeNode"
+          },
+          "node_count": {
+            "type": "integer",
+            "title": "Node Count"
+          },
+          "truncated": {
+            "type": "boolean",
+            "title": "Truncated"
+          }
+        },
+        "type": "object",
+        "required": [
+          "repo",
+          "direction",
+          "depth",
+          "include_noise",
+          "include_may_call",
+          "root",
+          "node_count",
+          "truncated"
+        ],
+        "title": "TreeResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

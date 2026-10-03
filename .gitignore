@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+dist/
+
+# generated / cloned data
+data/*
+!data/.gitkeep
+repos/*
+!repos/.gitkeep
+
+web/test-results/
+web/playwright-report/
+
+.DS_Store
+web/openapi.json.bak

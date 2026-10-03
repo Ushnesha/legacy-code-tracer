@@ -1,0 +1,218 @@
+@import "tailwindcss";
+
+/* The whole palette lives here. Components use only these names (bg-paper, text-writes, ...). */
+:root {
+  --paper: #f3f5f7; /* page */
+  --panel: #ffffff;
+  --ink: #14202b; /* text and call lines */
+  --muted: #5b6b7a;
+  --rule: #d5dce3;
+
+  --may-call: #b7791f; /* virtual calls: amber, dashed */
+  --reads: #1f7a8c; /* teal */
+  --writes: #c2410c; /* red-orange: where bugs and coupling live */
+  --unverified: #7c3aed; /* AI text that has not been checked */
+
+  /* Class colors for nodes: ten muted hues, picked by a stable hash of the class name. */
+  --class-0: #5c7a99;
+  --class-1: #6f8f72;
+  --class-2: #8c7b5e;
+  --class-3: #85758f;
+  --class-4: #6e8790;
+  --class-5: #9a7080;
+  --class-6: #7a8450;
+  --class-7: #6a6f9c;
+  --class-8: #8f7468;
+  --class-9: #577f6e;
+}
+
+:root[data-theme="dark"] {
+  --paper: #10171e;
+  --panel: #17212a;
+  --ink: #e8edf1;
+  --muted: #9aa9b7;
+  --rule: #2a3844;
+
+  --may-call: #e0a63b;
+  --reads: #4fb5c9;
+  --writes: #f2824a;
+  --unverified: #a98bfa;
+
+  --class-0: #8fa9c4;
+  --class-1: #98b89a;
+  --class-2: #bbaa88;
+  --class-3: #b1a1bd;
+  --class-4: #9db3bb;
+  --class-5: #c7a0ae;
+  --class-6: #a7b27b;
+  --class-7: #9ea3c9;
+  --class-8: #bca297;
+  --class-9: #86ab9a;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-may-call: var(--may-call);
+  --color-reads: var(--reads);
+  --color-writes: var(--writes);
+  --color-unverified: var(--unverified);
+  --font-sans: "Atkinson Hyperlegible Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --radius-node: 4px; /* nodes and inputs; panels stay square */
+}
+
+/* Base styles go in the base layer so utility classes (text-paper, font-mono, ...) can override them. */
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Focus is always visible. */
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  code,
+  pre {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer components {
+  .mono {
+    font-family: var(--font-mono);
+  }
+}
+
+/* Thin progress bar: always takes 2px so nothing jumps when loading starts. */
+.progress {
+  height: 2px;
+  overflow: hidden;
+  background: transparent;
+}
+.progress > span {
+  display: block;
+  height: 100%;
+  width: 35%;
+  background: var(--ink);
+  animation: progress-slide 1.1s ease-in-out infinite;
+}
+@keyframes progress-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .progress > span {
+    width: 100%; /* no sliding: just show that something is loading */
+    opacity: 0.35;
+  }
+}
+
+/* ---- call tree (React Flow) in the theme: square panels, 1px rules, no shadows ---- */
+.react-flow {
+  --xy-background-color: var(--paper);
+  --xy-minimap-background-color: var(--panel);
+  --xy-minimap-mask-background-color: color-mix(in srgb, var(--paper) 70%, transparent);
+  --xy-minimap-mask-stroke-color: var(--ink);
+  --xy-minimap-mask-stroke-width: 1;
+  --xy-controls-button-background-color: var(--panel);
+  --xy-controls-button-background-color-hover: var(--paper);
+  --xy-controls-button-color: var(--ink);
+  --xy-controls-button-color-hover: var(--ink);
+  --xy-controls-button-border-color: var(--rule);
+  --xy-attribution-background-color: transparent;
+  --xy-edge-stroke: var(--ink);
+  font-family: var(--font-sans);
+}
+.react-flow__minimap,
+.react-flow__controls {
+  border: 1px solid var(--rule);
+  box-shadow: none;
+  border-radius: 0;
+  overflow: hidden;
+}
+.react-flow__controls-button {
+  border-bottom: 1px solid var(--rule);
+}
+.react-flow__controls-button svg {
+  fill: currentColor;
+}
+.react-flow__attribution {
+  color: var(--muted);
+  font-size: 10px;
+}
+.react-flow__attribution a {
+  color: var(--muted);
+}
+.react-flow__node {
+  cursor: pointer;
+}
+/* the hovered node and its tooltip go in front of its neighbours */
+.react-flow__node:hover {
+  z-index: 1000 !important;
+}
+.node-tip {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.1s ease 0.5s,
+    visibility 0s linear 0.6s;
+}
+.react-flow__node:hover .node-tip,
+.react-flow__node:focus-within .node-tip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ---- syntax highlighting: shiki's CSS-variable theme, mapped to the palette.
+   Code never uses the meaning colors (amber, teal, red-orange, violet): those are for edges and data. ---- */
+:root {
+  --shiki-foreground: var(--ink);
+  --shiki-background: transparent;
+  --shiki-token-comment: var(--muted);
+  --shiki-token-punctuation: var(--muted);
+  --shiki-token-keyword: var(--class-0);
+  --shiki-token-string: var(--class-1);
+  --shiki-token-string-expression: var(--class-1);
+  --shiki-token-constant: var(--class-2);
+  --shiki-token-parameter: var(--ink);
+  --shiki-token-function: var(--class-7);
+  --shiki-token-link: var(--class-0);
+}

@@ -1,0 +1,21 @@
+# docker compose up --build   ->   http://localhost:5173/?repo=jsbsim
+# Needs data/jsbsim.db (committed on the demo branch) and, for the Code tab, repos/jsbsim (make demo clones it).
+services:
+  server:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./repos:/app/repos:ro
+    environment:
+      # 1 = show only saved explanations and never call the AI (the safe default for a demo)
+      AEROTRACE_OFFLINE: "${AEROTRACE_OFFLINE:-1}"
+  web:
+    build: ./web
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
+    environment:
+      API_URL: http://server:8000
