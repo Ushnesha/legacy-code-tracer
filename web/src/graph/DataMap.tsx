@@ -28,6 +28,7 @@ import { layoutGraph, type XY } from "./layout";
 import { lensRole, useLens, type LensRole } from "./lens";
 import { LensRing } from "./TreeNodeView";
 import { LensCard } from "./LensCard";
+import { lastPart } from "../lib/names";
 
 const FN_W = 248;
 const FN_H = 40;
@@ -229,7 +230,7 @@ function Inner() {
             <div role="radiogroup" aria-label="What to group by" className="inline-flex">
               {(
                 [
-                  ["class", d.available.class_name ? `Class ${d.available.class_name.split("::").pop()}` : "Class", !d.available.class_name],
+                  ["class", d.available.class_name ? `Class ${lastPart(d.available.class_name)}` : "Class", !d.available.class_name],
                   ["file", `File ${d.available.file.split("/").pop()}`, false],
                 ] as const
               ).map(([value, label, disabled]) => (

@@ -16,6 +16,7 @@ from typing import Iterator, Literal
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 
 from extractor.common.flags import function_flags
+from extractor.common.names import container_of, member_patterns
 from extractor.common import explain as X  # the impact rules, shared with the explain step
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -514,10 +515,10 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
             out = rollup_dict(hit)
             if kind == "class":
                 rows = conn.execute(
-                    f"SELECT {FN_COLS} FROM {FN_FROM} WHERE f.qualified_name LIKE ? AND f.container IS NOT NULL",
-                    (key + "::%",),
+                    f"SELECT {FN_COLS} FROM {FN_FROM} WHERE (f.qualified_name LIKE ? OR f.qualified_name LIKE ?) AND f.container IS NOT NULL",
+                    member_patterns(key),
                 ).fetchall()
-                rows = [r for r in rows if r["qualified_name"].rsplit("::", 1)[0] == key]
+                rows = [r for r in rows if container_of(r["qualified_name"]) == key]
             else:
                 rows = conn.execute(f"SELECT {FN_COLS} FROM {FN_FROM} WHERE f.file = ?", (key,)).fetchall()
             out["functions"] = sorted((brief(r) for r in rows), key=fn_order)
@@ -718,15 +719,15 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
     def datamap(repo: str, fn: str, scope: Literal["class", "file"] | None = None, conn=DB) -> dict:
         row = get_function_row(conn, fn)
         qname, file = row["qualified_name"], row["file"]
-        cls = qname.rsplit("::", 1)[0] if row["container"] and "::" in qname else None
+        cls = container_of(qname) if row["container"] else None
         kind = scope or ("class" if cls else "file")
         if kind == "class" and not cls:
             kind = "file"
         if kind == "class":
             rows = conn.execute(
-                f"SELECT {FN_COLS} FROM {FN_FROM} WHERE f.container IS NOT NULL AND f.qualified_name LIKE ?", (cls + "::%",)
+                f"SELECT {FN_COLS} FROM {FN_FROM} WHERE f.container IS NOT NULL AND (f.qualified_name LIKE ? OR f.qualified_name LIKE ?)", member_patterns(cls)
             ).fetchall()
-            rows = [r for r in rows if r["qualified_name"].rsplit("::", 1)[0] == cls]
+            rows = [r for r in rows if container_of(r["qualified_name"]) == cls]
             key = cls
         else:
             rows = conn.execute(f"SELECT {FN_COLS} FROM {FN_FROM} WHERE f.file = ?", (file,)).fetchall()

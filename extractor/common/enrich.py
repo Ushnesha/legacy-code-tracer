@@ -19,6 +19,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from .config import PROJECT_ROOT, RepoConfig, find_config
+from .names import container_of, ends_with_name
 from .schema import Edge, FunctionNode, Graph, load_graph, save_graph
 
 CALL_KINDS = ("calls", "may_call")
@@ -31,9 +32,9 @@ ACCESSOR_MAX_LOC = 4
 
 def class_of(fn: FunctionNode) -> str | None:
     """Qualified class name of a method (None for free functions)."""
-    if fn.container is None or "::" not in fn.qualified_name:
+    if fn.container is None:
         return None
-    return fn.qualified_name.rsplit("::", 1)[0]
+    return container_of(fn.qualified_name)
 
 
 def method_key(fn: FunctionNode) -> tuple | None:
@@ -143,7 +144,7 @@ def tag_noise(fns: list[FunctionNode], graph: Graph, cfg: RepoConfig) -> None:
         reason = None
         if f.name.startswith("operator"):
             reason = "operator"
-        elif cls and any(cls == c or cls.endswith("::" + c) for c in cfg.noise_classes):
+        elif cls and any(ends_with_name(cls, c) for c in cfg.noise_classes):
             reason = "noise_class"
         elif any(fnmatch.fnmatch(f.name, p) or fnmatch.fnmatch(f.qualified_name, p) for p in cfg.noise_name_patterns):
             reason = "name_pattern"
@@ -257,7 +258,7 @@ def pick_entry_points(graph: Graph, fns: list[FunctionNode], cfg: RepoConfig) ->
     listed = set(cfg.entry_points)
     configured_ids: set[str] = set()
     for f in fns:
-        configured = f.qualified_name in listed or any(f.qualified_name.endswith("::" + e) for e in listed)
+        configured = f.qualified_name in listed or any(ends_with_name(f.qualified_name, e) for e in listed)
         if configured:
             configured_ids.add(f.id)
         is_main = f.name == "main" and f.container is None and f.qualified_name == "main"

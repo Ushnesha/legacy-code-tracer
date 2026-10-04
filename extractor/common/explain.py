@@ -37,6 +37,7 @@ from server.store import DATA_DIR, connect, migrate, rebuild_fts, resolve_repo_d
 
 from .config import load_env_file
 from .enrich import _sccs
+from .names import container_of, ends_with_name
 
 PROMPT_VERSION = "3"  # 2: role, change_risks and the impact facts; 3: business_impact
 DEFAULT_MODEL = "qwen3-235b-a22b-instruct-2507"
@@ -204,9 +205,9 @@ class Fn:
 
     @property
     def cls(self) -> str | None:
-        if self.container is None or "::" not in self.qname:
+        if self.container is None:
             return None
-        return self.qname.rsplit("::", 1)[0]
+        return container_of(self.qname)
 
     @property
     def templated(self) -> bool:
@@ -719,10 +720,10 @@ def verify_answer(view: GraphView, fn: Fn, ans: Answer) -> list[str]:
     def candidates(m: str) -> set[str]:
         out = set()
         for i, f in view.fns.items():
-            if f.qname == m or f.name == m or f.qname.endswith("::" + m):
+            if f.name == m or ends_with_name(f.qname, m):
                 out.add(i)
         for i, f in view.fields.items():
-            if f.qname == m or f.name == m or f.qname.endswith("::" + m):
+            if f.name == m or ends_with_name(f.qname, m):
                 out.add(i)
         return out
 
@@ -798,6 +799,13 @@ def offline_requested() -> bool:
     return os.environ.get("AEROTRACE_OFFLINE", "").strip().lower() in ("1", "true", "yes")
 
 
+def system_prompt_for(language: str | None) -> str:
+    """The C/C++ prompt is used unchanged; Ada gets the same rules in Ada's words."""
+    if language != "ada":
+        return SYSTEM_PROMPT
+    return SYSTEM_PROMPT.replace("legacy C/C++ codebase", "legacy Ada codebase").replace("class names", "package names")
+
+
 class Explainer:
     def __init__(
         self, conn: sqlite3.Connection, llm: LLM, *, model: str | None = None, fast_model: str | None = None,
@@ -812,6 +820,8 @@ class Explainer:
         self.sem = asyncio.Semaphore(max(1, concurrency))
         self.log = log
         self.view = GraphView(conn)
+        row = conn.execute("SELECT value FROM meta WHERE key = 'language'").fetchone()
+        self.system_prompt = system_prompt_for(row[0] if row else None)
         self.summaries: dict[str, str] = {
             r["function_id"]: r["short"] for r in conn.execute("SELECT function_id, short FROM summaries WHERE short IS NOT NULL")
         }
@@ -862,7 +872,7 @@ class Explainer:
                 chosen += [(f, model) for f in group]
                 calls += 1
                 fns += len(chunk)
-                t_in = (len(SYSTEM_PROMPT) + len(prompt)) // 4
+                t_in = (len(self.system_prompt) + len(prompt)) // 4
                 t_out = EXPECTED_OUTPUT_TOKENS * len(chunk)
                 tin += t_in
                 tout += t_out
@@ -924,7 +934,7 @@ class Explainer:
     # -- one call (with the concurrency limit)
     async def _ask(self, model: str, messages: list[dict], max_tokens: int) -> str:
         async with self.sem:
-            res = await self.llm.complete(model=model, system=SYSTEM_PROMPT, messages=list(messages), max_tokens=max_tokens)
+            res = await self.llm.complete(model=model, system=self.system_prompt, messages=list(messages), max_tokens=max_tokens)
         self.result.llm_calls += 1
         self.result.input_tokens += res.input_tokens
         self.result.output_tokens += res.output_tokens
@@ -1029,7 +1039,7 @@ class Explainer:
                 lines.append(f"Doc comment: {clip(v.class_docs[key], 800)}")
             if v.class_bases.get(key):
                 lines.append("Built on: " + ", ".join(v.class_bases[key]))
-            fs = [f for f in v.fields.values() if f.container and f.qname.rsplit("::", 1)[0] == key]
+            fs = [f for f in v.fields.values() if f.container and container_of(f.qname) == key]
             if fs:
                 lines.append("Fields: " + ", ".join(f"{f.name} ({f.type})" for f in sorted(fs, key=lambda f: f.name)[:40]))
         else:
