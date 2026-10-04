@@ -6,13 +6,13 @@ node_modules/
 dist/
 
 # generated / cloned data
-data/*
+# data/*
 !data/.gitkeep
-repos/*
+# repos/*
 !repos/.gitkeep
 
-web/test-results/
-web/playwright-report/
+# web/test-results/
+# web/playwright-report/
 
 .DS_Store
 web/openapi.json.bak
