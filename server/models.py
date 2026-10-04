@@ -7,7 +7,7 @@ at run time, which keeps big trees fast.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel
 
@@ -90,6 +90,29 @@ class SearchResponse(BaseModel):
     fields: list[FieldBrief]
 
 
+class DataUsers(BaseModel):
+    field: str
+    readers: list[str]
+    readers_total: int
+
+
+class ImpactFacts(BaseModel):
+    """What a change to the function could reach, worked out from the graph (no AI)."""
+
+    level: Literal["low", "medium", "high"]
+    reason: str
+    direct_callers: int
+    direct_dependents: int  # its callers + other readers of the data it changes; this sets the level
+    callers_any_distance: int
+    affected: int  # callers at any distance + other readers of the data it changes
+    files: list[str]
+    files_total: int
+    is_entry_point: bool
+    entry_points: list[str]  # other entry points that lead here
+    entry_points_total: int
+    data_users: list[DataUsers]
+
+
 class SummaryInfo(BaseModel):
     short: str | None
     detailed: str | None
@@ -101,6 +124,11 @@ class SummaryInfo(BaseModel):
     mentions: list[str]
     verified: bool | None  # None: never checked
     reasons: list[str]
+    role: str | None = None  # its job in the wider program (AI)
+    change_risks: list[str] = []  # what could break if it changes (AI)
+    business_impact: str | None = None  # what the program or its users would notice (AI)
+    impact_level: Literal["low", "medium", "high"] | None = None  # from the graph alone
+    impact: ImpactFacts | None = None
 
 
 class IndirectCalls(BaseModel):
@@ -172,11 +200,39 @@ class ImpactLevel(BaseModel):
     functions: list[ImpactFn]
 
 
+Severity = Literal["low", "medium", "high"]
+
+
+class AffectedFn(FnBrief):
+    """One function a change could reach, with how, how badly, and roughly how long to fix."""
+
+    distance: int  # 1 = uses it directly (calls it, or reads data it changes)
+    how: list[str]  # plain-English ways it is connected
+    severity: Severity
+    severity_reason: str
+    effort_hours: float  # to update and retest it (rough)
+
+
+class Effort(BaseModel):
+    """Rough hours for the whole job, from the graph (a planning aid, not a quote)."""
+
+    change: float  # making the change itself
+    checks: float  # updating and retesting what it affects
+    low: float
+    high: float
+
+
 class ImpactResponse(BaseModel):
     root: FnBrief
     max_depth: int
-    total: int
+    total: int  # functions reached through calls (levels)
     levels: list[ImpactLevel]
+    severity: Severity  # the same level the Explain tab shows
+    severity_reason: str
+    effort: Effort
+    affected: list[AffectedFn]  # calls and data readers together, nearest and most severe first
+    business_impact: str | None  # AI, from the explain step
+    business_impact_checked: bool | None  # None: no AI text
 
 
 class StoryResponse(BaseModel):

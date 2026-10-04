@@ -22,6 +22,7 @@ export type TreeNode = Schemas["TreeNode"];
 export type TreeResponse = Schemas["TreeResponse"];
 export type FieldDetail = Schemas["FieldDetail"];
 export type ImpactResponse = Schemas["ImpactResponse"];
+export type AffectedFn = Schemas["AffectedFn"];
 export type StoryResponse = Schemas["StoryResponse"];
 export type Rollup = Schemas["Rollup"];
 export type RollupDetail = Schemas["RollupDetail"];

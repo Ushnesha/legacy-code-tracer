@@ -88,7 +88,12 @@ CREATE TABLE summaries (
     side_effects_json TEXT,
     mentions_json TEXT,
     verified INTEGER,                 -- 1 = every claim checked out against the graph
-    reasons_json TEXT                 -- why it is not verified
+    reasons_json TEXT,                -- why it is not verified
+    role TEXT,                        -- its job in the wider program (AI)
+    change_risks_json TEXT,           -- what could break if it changes (AI, from the impact facts)
+    business_impact TEXT,             -- what the program or its users would notice (AI)
+    impact_level TEXT,               -- "low" | "medium" | "high", from the graph alone
+    impact_json TEXT                  -- the impact facts behind the level, from the graph alone
 );
 CREATE TABLE flow_stories (
     function_id TEXT PRIMARY KEY,     -- an entry point
@@ -171,6 +176,11 @@ _EXTRA_SUMMARY_COLUMNS = {
     "mentions_json": "TEXT",
     "verified": "INTEGER",
     "reasons_json": "TEXT",
+    "role": "TEXT",
+    "change_risks_json": "TEXT",
+    "business_impact": "TEXT",
+    "impact_level": "TEXT",
+    "impact_json": "TEXT",
 }
 
 

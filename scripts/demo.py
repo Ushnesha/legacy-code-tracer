@@ -23,7 +23,8 @@ import urllib.request
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from extractor.common.config import PROJECT_ROOT, find_config
+from extractor.common.config import PROJECT_ROOT, find_config, load_env_file
+from extractor.common.explain import has_credentials
 from extractor.common.schema import load_graph
 
 API_PORT = 8000
@@ -130,8 +131,8 @@ class Demo:
         """(offline?, why). Offline when asked for, or when there is no way to reach the API."""
         if os.environ.get("AEROTRACE_OFFLINE", "").strip().lower() in ("1", "true", "yes"):
             return True, "AEROTRACE_OFFLINE is set"
-        if not (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN")):
-            return True, "no ANTHROPIC_API_KEY"
+        if not has_credentials():
+            return True, "no API key (set ANTHROPIC_API_KEY, or OPENAI_API_KEY and OPENAI_BASE_URL)"
         return False, ""
 
     def explain(self) -> None:
@@ -158,7 +159,8 @@ class Demo:
         if offline and ai == 0:
             self.log(
                 "  note: there are no AI explanations yet, so functions show 'No explanation yet'. "
-                f"Set ANTHROPIC_API_KEY and run `make explain REPO={self.repo}` once, before the demo."
+                "Put ANTHROPIC_API_KEY (or OPENAI_API_KEY and OPENAI_BASE_URL) in .env and run "
+                f"`make explain REPO={self.repo}` once, before the demo."
             )
 
     def pipeline(self) -> None:
@@ -228,6 +230,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--data-dir", default=str(PROJECT_ROOT / "data"))
     ap.add_argument("--repos-dir", default=str(PROJECT_ROOT / "repos"))
     args = ap.parse_args(argv)
+    load_env_file()  # the explain step reads the same .env
 
     demo = Demo(Path(args.repo).name, Path(args.data_dir), Path(args.repos_dir), yes=args.yes or os.environ.get("DEMO_YES") == "1")
     demo.data_dir.mkdir(parents=True, exist_ok=True)

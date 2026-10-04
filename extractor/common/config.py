@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -50,3 +51,24 @@ def find_config(
         if c.is_file():
             return RepoConfig.from_file(c)
     return RepoConfig()
+
+
+def load_env_file(path: Path | None = None) -> list[str]:
+    """Read KEY=VALUE lines from the project's .env into the environment. A variable already set in the
+    shell wins over the file. Returns the names it set (never the values)."""
+    path = path or PROJECT_ROOT / ".env"
+    if not path.is_file():
+        return []
+    set_now = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.removeprefix("export ").split("=", 1)
+        key, value = key.strip(), value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
+            value = value[1:-1]
+        if key and key not in os.environ:
+            os.environ[key] = value
+            set_now.append(key)
+    return set_now

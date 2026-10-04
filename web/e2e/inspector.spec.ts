@@ -225,13 +225,15 @@ test.describe("Data tab and the data lens", () => {
 });
 
 test.describe("Impact tab", () => {
-  test("groups callers by distance with counts; 'Show as tree' flips the canvas to who-calls-it", async ({ page }) => {
+  test("severity, effort and affected functions by file; 'Show as tree' flips the canvas to who-calls-it", async ({ page }) => {
     await openRoot(page, "tinyxml2", "XMLNode::Unlink", "XMLNode::Unlink");
     await page.getByRole("tab", { name: "Impact" }).click();
-    await expect(page.getByRole("heading", { name: "If you change this, these could be affected" })).toBeVisible();
-    await expect(page.getByText(/^Directly/)).toBeVisible();
-    await expect(page.getByText(/2 steps away/)).toBeVisible();
+    await expect(page.getByRole("heading", { name: "If you change this" })).toBeVisible();
+    await expect(page.getByTestId("impact-severity")).toHaveText(/High|Medium|Low/);
+    await expect(page.getByTestId("impact-effort")).toContainText(/About [\d.]+–[\d.]+ hours?/);
     await expect(page.getByText(/Up to \d+ functions could be affected/)).toBeVisible();
+    await expect(page.getByTestId("impact-file").first()).toBeVisible();
+    await expect(page.getByTestId("affected-fn").first()).toContainText(/Calls it directly|May call it|Reads /);
     const root = new URL(page.url()).searchParams.get("root");
     await page.getByTestId("show-as-tree").click();
     await expect(page).toHaveURL(/dir=up/);

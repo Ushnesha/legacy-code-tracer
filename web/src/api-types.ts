@@ -263,6 +263,67 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * AffectedFn
+         * @description One function a change could reach, with how, how badly, and roughly how long to fix.
+         */
+        AffectedFn: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Qualified Name */
+            qualified_name: string;
+            /** Container */
+            container: string | null;
+            /** File */
+            file: string;
+            /** Line Start */
+            line_start: number;
+            /** Line End */
+            line_end: number;
+            /** Is Virtual */
+            is_virtual: boolean;
+            /** Is Pure Virtual */
+            is_pure_virtual: boolean;
+            /** Is Entry Point */
+            is_entry_point: boolean;
+            /** Is Noise */
+            is_noise: boolean;
+            /** Noise Reason */
+            noise_reason: string | null;
+            /** Loc */
+            loc: number;
+            /** Fan In */
+            fan_in: number;
+            /** Fan Out */
+            fan_out: number;
+            /** Reach */
+            reach: number;
+            /** Summary */
+            summary: string | null;
+            /** Summary Model */
+            summary_model: string | null;
+            /** Summary Verified */
+            summary_verified: boolean | null;
+            /** Fields Written Count */
+            fields_written_count: number;
+            /** Indirect Calls */
+            indirect_calls: number;
+            /** Distance */
+            distance: number;
+            /** How */
+            how: string[];
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "low" | "medium" | "high";
+            /** Severity Reason */
+            severity_reason: string;
+            /** Effort Hours */
+            effort_hours: number;
+        };
         /** Callees */
         Callees: {
             /** Calls */
@@ -331,6 +392,15 @@ export interface components {
             /** Key */
             key: string;
         };
+        /** DataUsers */
+        DataUsers: {
+            /** Field */
+            field: string;
+            /** Readers */
+            readers: string[];
+            /** Readers Total */
+            readers_total: number;
+        };
         /** EdgeInfo */
         EdgeInfo: {
             /** Kind */
@@ -343,6 +413,20 @@ export interface components {
             lines: number[];
             /** Dispatch */
             dispatch: boolean;
+        };
+        /**
+         * Effort
+         * @description Rough hours for the whole job, from the graph (a planning aid, not a quote).
+         */
+        Effort: {
+            /** Change */
+            change: number;
+            /** Checks */
+            checks: number;
+            /** Low */
+            low: number;
+            /** High */
+            high: number;
         };
         /** EntryPoint */
         EntryPoint: {
@@ -568,6 +652,39 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /**
+         * ImpactFacts
+         * @description What a change to the function could reach, worked out from the graph (no AI).
+         */
+        ImpactFacts: {
+            /**
+             * Level
+             * @enum {string}
+             */
+            level: "low" | "medium" | "high";
+            /** Reason */
+            reason: string;
+            /** Direct Callers */
+            direct_callers: number;
+            /** Direct Dependents */
+            direct_dependents: number;
+            /** Callers Any Distance */
+            callers_any_distance: number;
+            /** Affected */
+            affected: number;
+            /** Files */
+            files: string[];
+            /** Files Total */
+            files_total: number;
+            /** Is Entry Point */
+            is_entry_point: boolean;
+            /** Entry Points */
+            entry_points: string[];
+            /** Entry Points Total */
+            entry_points_total: number;
+            /** Data Users */
+            data_users: components["schemas"]["DataUsers"][];
+        };
         /** ImpactFn */
         ImpactFn: {
             /** Id */
@@ -633,6 +750,20 @@ export interface components {
             total: number;
             /** Levels */
             levels: components["schemas"]["ImpactLevel"][];
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "low" | "medium" | "high";
+            /** Severity Reason */
+            severity_reason: string;
+            effort: components["schemas"]["Effort"];
+            /** Affected */
+            affected: components["schemas"]["AffectedFn"][];
+            /** Business Impact */
+            business_impact: string | null;
+            /** Business Impact Checked */
+            business_impact_checked: boolean | null;
         };
         /** IndirectCalls */
         IndirectCalls: {
@@ -770,6 +901,18 @@ export interface components {
             verified: boolean | null;
             /** Reasons */
             reasons: string[];
+            /** Role */
+            role?: string | null;
+            /**
+             * Change Risks
+             * @default []
+             */
+            change_risks: string[];
+            /** Business Impact */
+            business_impact?: string | null;
+            /** Impact Level */
+            impact_level?: ("low" | "medium" | "high") | null;
+            impact?: components["schemas"]["ImpactFacts"] | null;
         };
         /** TreeNode */
         TreeNode: {

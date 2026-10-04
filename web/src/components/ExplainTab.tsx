@@ -3,8 +3,10 @@ import type { FnWithEdge, SummaryInfo } from "../api";
 import { buildNameIndex, linkifyStep, plainReason } from "../lib/inspect";
 import { useTreeStore } from "../graph/treeStore";
 import { classColor } from "../lib/classColor";
+import { SEVERITY_STYLE, SEVERITY_WORD } from "../lib/severity";
 import { plural, shortName } from "../lib/util";
 import { useFunction, useStory } from "../queries";
+import { useStore } from "../store";
 import { ErrorNote } from "./ErrorNote";
 import { FnLink } from "./FnLink";
 import { ProgressBar } from "./ProgressBar";
@@ -93,6 +95,66 @@ function Explanation({ s }: { s: SummaryInfo }) {
   );
 }
 
+
+const andMore = (shown: string[], total: number) =>
+  shown.join(", ") + (total > shown.length ? `, and ${total - shown.length} more` : "");
+
+/** Its job in the program, and what a change to it could reach. The level and facts come from the graph;
+ *  only the role and the warnings are AI text (violet when unchecked, like the rest). */
+function ChangeImpact({ s }: { s: SummaryInfo }) {
+  const setTab = useStore((st) => st.setTab);
+  const imp = s.impact;
+  const unchecked = !!s.model && s.model !== "template" && s.verified !== true;
+  const tone = unchecked ? "text-unverified" : "";
+  const risks = s.change_risks ?? [];
+  if (!imp && !s.role && !risks.length) return null;
+  return (
+    <>
+      {s.role && (
+        <Block title="Its role">
+          <p className={tone}>{s.role}</p>
+        </Block>
+      )}
+      <section className="mt-4" data-testid="change-impact">
+        <h3 className="font-semibold text-sm text-muted mb-1">If you change it</h3>
+        {imp && (
+          <>
+            <p>
+              <span data-testid="impact-level" className={`inline-block rounded-node border px-2 py-0.5 text-sm ${SEVERITY_STYLE[imp.level]}`}>
+                {SEVERITY_WORD[imp.level]} impact
+              </span>
+            </p>
+            <p className="text-sm mt-1">{imp.reason}</p>
+          </>
+        )}
+        {risks.length > 0 && (
+          <ul className={`list-disc pl-5 mt-2 ${tone}`}>
+            {risks.map((r) => (
+              <li key={r}>{r}</li>
+            ))}
+          </ul>
+        )}
+        {imp && (
+          <ul className="text-sm text-muted mt-2 space-y-1">
+            {imp.is_entry_point && <li>The program starts here.</li>}
+            {imp.entry_points.length > 0 && <li>Reached from: {andMore(imp.entry_points.map((q) => q.split("::").pop()!), imp.entry_points_total)}</li>}
+            {imp.files_total > 0 && <li>Other files that could be affected: {andMore(imp.files, imp.files_total)}</li>}
+            {imp.data_users.map((d) => (
+              <li key={d.field}>
+                It changes <span className="mono">{d.field.split("::").pop()}</span>, which {andMore(d.readers.map((q) => q.split("::").pop()!), d.readers_total)}{" "}
+                {d.readers_total === 1 ? "also reads" : "also read"}.
+              </li>
+            ))}
+          </ul>
+        )}
+        <button type="button" className="text-sm underline underline-offset-2 hover:no-underline mt-2" onClick={() => setTab("impact")}>
+          See everything that could be affected
+        </button>
+      </section>
+    </>
+  );
+}
+
 /** "What happens when this runs": the story's steps, with names that are in the tree turned into links. */
 function Story({ repo, id }: { repo: string; id: string }) {
   const q = useStory(repo, id);
@@ -152,7 +214,10 @@ export function ExplainTab({ repo, id }: { repo: string; id: string }) {
 
             <div className="mt-3">
               {d.summary ? (
-                <Explanation s={d.summary} />
+                <>
+                  <Explanation s={d.summary} />
+                  <ChangeImpact s={d.summary} />
+                </>
               ) : (
                 <p className="text-muted">
                   There's no explanation for this function yet. Run <code>make explain REPO=repos/{repo}</code> to write one.
