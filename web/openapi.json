@@ -819,6 +819,188 @@
   },
   "components": {
     "schemas": {
+      "AffectedFn": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "qualified_name": {
+            "type": "string",
+            "title": "Qualified Name"
+          },
+          "container": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "line_start": {
+            "type": "integer",
+            "title": "Line Start"
+          },
+          "line_end": {
+            "type": "integer",
+            "title": "Line End"
+          },
+          "is_virtual": {
+            "type": "boolean",
+            "title": "Is Virtual"
+          },
+          "is_pure_virtual": {
+            "type": "boolean",
+            "title": "Is Pure Virtual"
+          },
+          "is_entry_point": {
+            "type": "boolean",
+            "title": "Is Entry Point"
+          },
+          "is_noise": {
+            "type": "boolean",
+            "title": "Is Noise"
+          },
+          "noise_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Noise Reason"
+          },
+          "loc": {
+            "type": "integer",
+            "title": "Loc"
+          },
+          "fan_in": {
+            "type": "integer",
+            "title": "Fan In"
+          },
+          "fan_out": {
+            "type": "integer",
+            "title": "Fan Out"
+          },
+          "reach": {
+            "type": "integer",
+            "title": "Reach"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "summary_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Model"
+          },
+          "summary_verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary Verified"
+          },
+          "fields_written_count": {
+            "type": "integer",
+            "title": "Fields Written Count"
+          },
+          "indirect_calls": {
+            "type": "integer",
+            "title": "Indirect Calls"
+          },
+          "distance": {
+            "type": "integer",
+            "title": "Distance"
+          },
+          "how": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "How"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "title": "Severity"
+          },
+          "severity_reason": {
+            "type": "string",
+            "title": "Severity Reason"
+          },
+          "effort_hours": {
+            "type": "number",
+            "title": "Effort Hours"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "qualified_name",
+          "container",
+          "file",
+          "line_start",
+          "line_end",
+          "is_virtual",
+          "is_pure_virtual",
+          "is_entry_point",
+          "is_noise",
+          "noise_reason",
+          "loc",
+          "fan_in",
+          "fan_out",
+          "reach",
+          "summary",
+          "summary_model",
+          "summary_verified",
+          "fields_written_count",
+          "indirect_calls",
+          "distance",
+          "how",
+          "severity",
+          "severity_reason",
+          "effort_hours"
+        ],
+        "title": "AffectedFn",
+        "description": "One function a change could reach, with how, how badly, and roughly how long to fix."
+      },
       "Callees": {
         "properties": {
           "calls": {
@@ -1027,6 +1209,32 @@
         ],
         "title": "DataMapScope"
       },
+      "DataUsers": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "Field"
+          },
+          "readers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Readers"
+          },
+          "readers_total": {
+            "type": "integer",
+            "title": "Readers Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "readers",
+          "readers_total"
+        ],
+        "title": "DataUsers"
+      },
       "EdgeInfo": {
         "properties": {
           "kind": {
@@ -1065,6 +1273,35 @@
           "dispatch"
         ],
         "title": "EdgeInfo"
+      },
+      "Effort": {
+        "properties": {
+          "change": {
+            "type": "number",
+            "title": "Change"
+          },
+          "checks": {
+            "type": "number",
+            "title": "Checks"
+          },
+          "low": {
+            "type": "number",
+            "title": "Low"
+          },
+          "high": {
+            "type": "number",
+            "title": "High"
+          }
+        },
+        "type": "object",
+        "required": [
+          "change",
+          "checks",
+          "low",
+          "high"
+        ],
+        "title": "Effort",
+        "description": "Rough hours for the whole job, from the graph (a planning aid, not a quote)."
       },
       "EntryPoint": {
         "properties": {
@@ -1791,6 +2028,89 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "ImpactFacts": {
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "title": "Level"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "direct_callers": {
+            "type": "integer",
+            "title": "Direct Callers"
+          },
+          "direct_dependents": {
+            "type": "integer",
+            "title": "Direct Dependents"
+          },
+          "callers_any_distance": {
+            "type": "integer",
+            "title": "Callers Any Distance"
+          },
+          "affected": {
+            "type": "integer",
+            "title": "Affected"
+          },
+          "files": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Files"
+          },
+          "files_total": {
+            "type": "integer",
+            "title": "Files Total"
+          },
+          "is_entry_point": {
+            "type": "boolean",
+            "title": "Is Entry Point"
+          },
+          "entry_points": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Entry Points"
+          },
+          "entry_points_total": {
+            "type": "integer",
+            "title": "Entry Points Total"
+          },
+          "data_users": {
+            "items": {
+              "$ref": "#/components/schemas/DataUsers"
+            },
+            "type": "array",
+            "title": "Data Users"
+          }
+        },
+        "type": "object",
+        "required": [
+          "level",
+          "reason",
+          "direct_callers",
+          "direct_dependents",
+          "callers_any_distance",
+          "affected",
+          "files",
+          "files_total",
+          "is_entry_point",
+          "entry_points",
+          "entry_points_total",
+          "data_users"
+        ],
+        "title": "ImpactFacts",
+        "description": "What a change to the function could reach, worked out from the graph (no AI)."
+      },
       "ImpactFn": {
         "properties": {
           "id": {
@@ -1995,6 +2315,51 @@
             },
             "type": "array",
             "title": "Levels"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "title": "Severity"
+          },
+          "severity_reason": {
+            "type": "string",
+            "title": "Severity Reason"
+          },
+          "effort": {
+            "$ref": "#/components/schemas/Effort"
+          },
+          "affected": {
+            "items": {
+              "$ref": "#/components/schemas/AffectedFn"
+            },
+            "type": "array",
+            "title": "Affected"
+          },
+          "business_impact": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Business Impact"
+          },
+          "business_impact_checked": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Business Impact Checked"
           }
         },
         "type": "object",
@@ -2002,7 +2367,13 @@
           "root",
           "max_depth",
           "total",
-          "levels"
+          "levels",
+          "severity",
+          "severity_reason",
+          "effort",
+          "affected",
+          "business_impact",
+          "business_impact_checked"
         ],
         "title": "ImpactResponse"
       },
@@ -2545,6 +2916,62 @@
             },
             "type": "array",
             "title": "Reasons"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "change_risks": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Change Risks",
+            "default": []
+          },
+          "business_impact": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Business Impact"
+          },
+          "impact_level": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact Level"
+          },
+          "impact": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ImpactFacts"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",

@@ -63,7 +63,11 @@ def test_explain_goes_offline_when_there_is_no_key_or_when_asked(monkeypatch, tm
     monkeypatch.delenv("AEROTRACE_OFFLINE")
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     monkeypatch.delenv("ANTHROPIC_AUTH_TOKEN", raising=False)
-    assert d.explain_mode() == (True, "no ANTHROPIC_API_KEY")
+    offline, why = d.explain_mode()
+    assert offline and why.startswith("no API key")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")  # an OpenAI-compatible endpoint is enough
+    assert d.explain_mode() == (False, "")
+    monkeypatch.delenv("OPENAI_API_KEY")
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test")
     assert d.explain_mode() == (False, "")
     monkeypatch.setenv("AEROTRACE_OFFLINE", "1")

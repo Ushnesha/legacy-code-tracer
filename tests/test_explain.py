@@ -233,6 +233,122 @@ def test_a_retry_with_the_errors_fed_back_can_fix_the_answer(db):
     assert "ghost_fn" in second["messages"][2]["content"]
 
 
+# ---------------------------------------------------------------- impact
+
+def test_impact_facts_come_from_the_graph(db):
+    conn, _, _ = db
+    view = GraphView(conn)
+    by_name = {f.qname: i for i, f in view.fns.items()}
+    leaf1 = view.impact(by_name["leaf1"])
+    # leaf1 <- mid <- top, and leaf1 <- peek
+    assert leaf1.direct_callers == 2 and leaf1.upstream == 3
+    assert {view.fns[a].qname for a in leaf1.affected} == {"mid", "peek", "top"}
+    assert [view.fns[e].qname for e in leaf1.entry_points] == ["top"]
+    assert leaf1.files == []  # everything is in x.cpp
+    writer = view.impact(by_name["writer"])
+    users = {view.fields[fl].qname: [view.fns[u].qname for u in us] for fl, us in writer.data_users.items()}
+    assert users == {"Box::v": ["Box::get", "peek", "reader"]}  # other functions that read what writer changes
+    assert writer.upstream == 0 and writer.direct == 3 and writer.level == "low"
+    assert writer.reason.startswith("3 functions use it directly")
+    assert leaf1.direct == 2 and "could reach 3 functions in all" in leaf1.reason  # top, through mid
+    assert view.impact(by_name["big"]).reason == "Nothing else in this project calls it or reads the data it changes."
+    top = view.impact(by_name["top"])
+    assert top.is_entry_point and top.entry_points == [] and "the program starts here" in top.reason
+
+
+def test_impact_level_counts_direct_users_and_their_files():
+    lvl = lambda direct, files: explain.impact_level(direct, files, direct, False)[0]
+    assert lvl(0, 0) == "low" and lvl(3, 1) == "low"
+    assert lvl(4, 0) == "medium" and lvl(1, 2) == "medium"
+    assert lvl(12, 0) == "high" and lvl(1, 5) == "high"
+    assert explain.impact_level(1, 0, 500, False)[0] == "low"  # many callers of callers alone do not raise it
+
+
+def test_the_prompt_lists_the_impact_facts(db):
+    conn, _, _ = db
+    llm = FakeLLM()
+    run(conn, llm)
+    (call,) = llm.asked_about("writer")
+    assert "Impact (worked out from the code graph):" in call["prompt"]
+    assert "Box::v: read by Box::get, peek, reader" in call["prompt"]
+    assert "Impact level: low." in call["prompt"]
+    assert '"change_risks"' in call["prompt"] and "change_risks" in call["system"]
+
+
+def test_role_and_change_risks_are_checked_saved_and_served(db):
+    conn, path, _ = db
+    llm = FakeLLM({
+        # reader is two hops away in the call graph, but it reads the data writer changes: allowed
+        "writer": lambda attempt: {
+            "role": "Fills in a Box for later readers.",
+            "change_risks": ["reader returns v, so a different value here changes what reader gives back."],
+            "mentions": ["reader", "v"],
+        },
+    })
+    ex, _ = run(conn, llm)
+    row = summary(conn, ex, "writer")
+    assert row["verified"] == 1 and len(llm.asked_about("writer")) == 1
+    assert row["role"] == "Fills in a Box for later readers." and row["impact_level"] == "low"
+    api = TestClient(create_app(path.parent))
+    (wid,) = [i for i, f in ex.view.fns.items() if f.qname == "writer"]
+    s = api.get(f"/api/repos/{path.stem}/functions/{wid}").json()["summary"]
+    assert s["change_risks"] == ["reader returns v, so a different value here changes what reader gives back."]
+    assert s["impact"]["data_users"] == [{"field": "Box::v", "readers": ["Box::get", "peek", "reader"], "readers_total": 3}]
+    assert s["impact"]["affected"] == 3 and "impact_json" not in s and "change_risks_json" not in s
+
+
+def test_impact_tab_shows_severity_how_effort_and_business_impact(db):
+    conn, path, _ = db
+    llm = FakeLLM({"writer": lambda attempt: {"business_impact": "Boxes would hold the wrong value for every reader."}})
+    ex, _ = run(conn, llm)
+    api = TestClient(create_app(path.parent))
+    fid = {f.qname: i for i, f in ex.view.fns.items()}
+
+    d = api.get(f"/api/repos/{path.stem}/impact/{fid['writer']}").json()
+    assert d["total"] == 0  # nothing calls writer...
+    rows = {a["qualified_name"]: a for a in d["affected"]}
+    assert set(rows) == {"Box::get", "peek", "reader"}  # ...but three functions read the v it changes
+    assert rows["reader"]["how"] == ["Reads v, which this function changes"]
+    assert rows["reader"]["distance"] == 1 and rows["reader"]["severity"] == "high" and rows["reader"]["effort_hours"] == 1.0
+    assert d["severity"] == "low" and d["severity_reason"].startswith("3 functions use it directly")
+    assert d["business_impact"] == "Boxes would hold the wrong value for every reader." and d["business_impact_checked"] is True
+    # change 1 h + three direct readers at 1 h each, nothing further away: 4 h, shown as 3-6 h
+    assert d["effort"] == {"change": 1.0, "checks": 3.0, "low": 3.0, "high": 6.0}
+
+    d = api.get(f"/api/repos/{path.stem}/impact/{fid['leaf1']}").json()
+    rows = {a["qualified_name"]: a for a in d["affected"]}
+    assert rows["mid"]["how"] == ["Calls it directly"] and rows["mid"]["severity"] == "high"
+    assert rows["top"]["how"] == ["Calls it through mid"] and rows["top"]["severity"] == "medium"
+    assert rows["top"]["effort_hours"] == 0.0  # covered by the one full test run
+    assert d["effort"]["checks"] == 2.0 + explain.RETEST_HOURS  # mid and peek, plus the full run for top
+    assert d["business_impact"] is None and d["business_impact_checked"] is None  # FakeLLM wrote none for leaf1
+    same = ex.view.impact(fid["leaf1"])  # the Explain tab's numbers
+    assert (d["severity"], d["severity_reason"]) == (same.level, same.reason)
+
+
+def test_severity_and_effort_rules():
+    assert explain.affected_severity(1, False)[0] == "high"
+    assert explain.affected_severity(2, False)[0] == "medium"
+    assert explain.affected_severity(3, False)[0] == "low"
+    assert explain.affected_severity(4, True)[0] == "medium"  # where the program starts is never low
+    assert explain.effort_hours("high", 10) == 1.0 and explain.effort_hours("high", 50) == 1.5
+    assert explain.effort_hours("high", 500) == 2.0 and explain.effort_hours("low", 500) == 0.0
+    assert explain.effort_range(10, 0.0, False) == {"change": 1.0, "checks": 0.0, "low": 1.0, "high": 1.5}
+
+
+def test_impact_numbers_are_refreshed_on_every_run_without_api_calls(db):
+    conn, _, _ = db
+    ex, _ = run(conn, FakeLLM())
+    conn.execute("UPDATE summaries SET impact_level = 'high', impact_json = NULL")
+    conn.commit()
+    llm = FakeLLM()
+    ex, res = run(conn, llm)
+    assert res.llm_calls == 0 and not llm.calls
+    row = summary(conn, ex, "leaf1")
+    assert row["impact_level"] == "low" and json.loads(row["impact_json"])["callers_any_distance"] == 3
+    assert summary(conn, ex, "Box::get")["impact_json"]  # template summaries get impact facts too
+
+
 def test_unreadable_answers_are_flagged_not_dropped(db):
     conn, _, _ = db
 
@@ -349,7 +465,8 @@ def test_old_database_is_migrated(tmp_path):
     store.migrate(c)
     store.migrate(c)  # twice is fine
     cols = {r[1] for r in c.execute("PRAGMA table_info(summaries)")}
-    assert {"verified", "reasons_json", "side_effects_json"} <= cols
+    assert {"verified", "reasons_json", "side_effects_json", "role", "change_risks_json", "business_impact",
+            "impact_level", "impact_json"} <= cols
     assert c.execute("SELECT COUNT(*) FROM flow_stories").fetchone()[0] == 0
 
 
@@ -423,7 +540,55 @@ def test_model_names_come_from_the_environment(db, monkeypatch):
     monkeypatch.delenv("AEROTRACE_MODEL")
     monkeypatch.delenv("AEROTRACE_FAST_MODEL")
     ex = Explainer(conn, FakeLLM(), log=lambda *_: None)
-    assert (ex.model, ex.fast_model) == ("claude-sonnet-5-5", "claude-haiku-4-5-20251001")
+    assert (ex.model, ex.fast_model) == (explain.DEFAULT_MODEL, explain.DEFAULT_FAST_MODEL)
+
+
+def test_openai_compatible_request_shape():
+    seen = []
+
+    class FakeCompletions:
+        async def create(self, **kw):
+            seen.append(kw)
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=SimpleNamespace(content='{"short": "x"}'))],
+                usage=SimpleNamespace(prompt_tokens=13, completion_tokens=4),
+            )
+
+    llm = explain.OpenAICompatibleLLM(client=SimpleNamespace(chat=SimpleNamespace(completions=FakeCompletions())))
+    msgs = [{"role": "user", "content": "hi"}, {"role": "assistant", "content": "{}"}, {"role": "user", "content": "fix"}]
+    res = asyncio.run(llm.complete(model="qwen3-235b-a22b-instruct-2507", system="sys", messages=msgs, max_tokens=500))
+    assert (res.text, res.input_tokens, res.output_tokens) == ('{"short": "x"}', 13, 4)
+    (kw,) = seen
+    assert kw["model"] == "qwen3-235b-a22b-instruct-2507" and kw["max_tokens"] == 500
+    assert kw["messages"] == [{"role": "system", "content": "sys"}, *msgs]  # system prompt goes first, as a message
+
+
+def test_provider_follows_the_keys_unless_told(monkeypatch):
+    assert explain.provider() == "anthropic" and not explain.has_credentials()
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
+    assert explain.provider() == "openai" and explain.has_credentials()
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant")
+    assert explain.provider() == "anthropic"  # both keys: Anthropic, unless told otherwise
+    monkeypatch.setenv("AEROTRACE_PROVIDER", "openai")
+    assert explain.provider() == "openai"
+
+
+def test_env_file_is_read_but_never_overrides_the_shell(tmp_path, monkeypatch):
+    from extractor.common.config import load_env_file
+
+    env = tmp_path / ".env"
+    env.write_text('# comment\nexport AT_ONE="quoted value"\nAT_TWO=plain=with=equals\nAT_SHELL=from-file\n\nnot a line\n')
+    monkeypatch.setenv("AT_SHELL", "from-shell")
+    for k in ("AT_ONE", "AT_TWO"):
+        monkeypatch.delenv(k, raising=False)
+    assert load_env_file(env) == ["AT_ONE", "AT_TWO"]
+    import os
+
+    assert os.environ["AT_ONE"] == "quoted value" and os.environ["AT_TWO"] == "plain=with=equals"
+    assert os.environ["AT_SHELL"] == "from-shell"
+    assert load_env_file(tmp_path / "missing") == []
+    for k in ("AT_ONE", "AT_TWO"):
+        monkeypatch.delenv(k)
 
 
 # ---------------------------------------------------------------- offline

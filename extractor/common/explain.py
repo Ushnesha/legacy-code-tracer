@@ -11,7 +11,11 @@ Works on data/<repo>.db (load the graph first: python -m server.store load ...).
      its side effects must really be written by the function. One retry with the errors fed
      back; if still wrong the summary is kept but flagged verified=false.
   4. Results are cached by hash (source + callee summaries + prompt version + model).
-  5. Afterwards: class and file roll-ups, and a "what happens when it runs" story per entry point.
+  5. Impact: the graph works out what a change could reach (callers at any distance, other readers of the
+     data it changes, entry points, files) and a low / medium / high level. These facts go into the prompt,
+     so the model can write the function's "role" and its "change_risks", and are stored with the summary.
+     The model never decides the level; the numbers are refreshed on every run, with no API call.
+  6. Afterwards: class and file roll-ups, and a "what happens when it runs" story per entry point.
 """
 
 from __future__ import annotations
@@ -31,11 +35,12 @@ from typing import Callable, Protocol
 
 from server.store import DATA_DIR, connect, migrate, rebuild_fts, resolve_repo_dir
 
+from .config import load_env_file
 from .enrich import _sccs
 
-PROMPT_VERSION = "1"
-DEFAULT_MODEL = "claude-sonnet-5-5"
-DEFAULT_FAST_MODEL = "claude-haiku-4-5-20251001"
+PROMPT_VERSION = "3"  # 2: role, change_risks and the impact facts; 3: business_impact
+DEFAULT_MODEL = "qwen3-235b-a22b-instruct-2507"
+DEFAULT_FAST_MODEL = "qwen3-235b-a22b-instruct-2507"
 FAST_MODEL_MAX_LOC = 15  # functions shorter than this use the fast model
 MAX_CONTEXT_CHARS = 24_000  # ~6k tokens at ~4 characters per token
 MAX_CALLEES_SHOWN = 25
@@ -54,17 +59,29 @@ PRICES = {
     "claude-haiku-4-5": (1.0, 5.0),
     "claude-haiku-4-5-20251001": (1.0, 5.0),
 }
-EXPECTED_OUTPUT_TOKENS = 450  # per function, for the estimate
+EXPECTED_OUTPUT_TOKENS = 600  # per function, for the estimate
 
-SYSTEM_PROMPT = """You explain code from a legacy C/C++ codebase to engineers who are new to it.
+# Impact: worked out from the graph, never by the model. "Affected" = every function that reaches this one
+# through calls (callers, their callers, ...) plus every other function that reads data this one changes.
+# The level counts only direct users (see impact_level). On JSBSim these give about 16% high, 24% medium.
+IMPACT_HIGH = 12  # direct users at or above this: high impact
+IMPACT_MEDIUM = 4
+IMPACT_HIGH_FILES = 5  # ... or direct users in this many other files
+IMPACT_MEDIUM_FILES = 2
+MAX_IMPACT_NAMES = 12  # names and files listed in the prompt and stored per function
+
+SYSTEM_PROMPT = """You explain code from a legacy C/C++ codebase to engineers who are new to it, or who are about to change it.
 
 Rules:
 1. Explain WHAT the function does and WHY it matters to the program. Do not narrate the code line by line.
 2. Use plain, everyday English. No jargon. Short sentences.
 3. Never guess about code you were not shown. If something is not clear from the code and the context given, say "unclear from the code".
-4. "mentions" lists every function and field name you used in your text. Only list names that appear in the "Calls", "Reads", "Writes" or "Called by" lists you were given, written exactly as shown there. Do not list library functions, class names or anything else; describe those in plain words instead.
+4. "mentions" lists every function and field name you used in your text. Only list names that appear in the "Calls", "Reads", "Writes", "Called by" or "Impact" lists you were given, written exactly as shown there. Do not list library functions, class names or anything else; describe those in plain words instead.
 5. "side_effects" lists the state the function changes. When the change is to a field, write that field's exact name. Only name fields from the "Writes" list. Use an empty list if nothing is changed.
-6. Answer with a single JSON object and nothing else: no markdown fences, no commentary."""
+6. "role" says where this function sits in the program and what relies on it, using the "Called by" and "Impact" facts.
+7. "change_risks" warns someone about to change this function. Give one point per thing that could break or behave differently, and say why: a caller that depends on what it returns, a function that reads data it changes, an entry point that leads here. Base every point on the facts you were given; never invent a dependency. Use an empty list if nothing else depends on it.
+8. "business_impact" says what the program, or the people relying on it, would notice if this function behaved differently: for example wrong numbers in results, a feature that stops working, a failure at start-up. Use the entry points, callers and data in the "Impact" facts to say where it would show up. If that is not clear from what you were given, say "unclear from the code".
+9. Answer with a single JSON object and nothing else: no markdown fences, no commentary."""
 
 ANSWER_SHAPE = """{
   "short": "one plain-English sentence, at most 20 words",
@@ -72,6 +89,9 @@ ANSWER_SHAPE = """{
   "inputs": "what it takes in",
   "outputs": "what it returns",
   "side_effects": ["state it changes", "..."],
+  "role": "1 or 2 plain-English sentences: its job in the wider program and what relies on it",
+  "change_risks": ["one plain-English warning per thing that could break if this function changes", "..."],
+  "business_impact": "2 or 3 plain-English sentences: what would go wrong for the program or its users if this function behaved differently",
   "mentions": ["every function and field name used in the text above"]
 }"""
 
@@ -117,6 +137,46 @@ class AnthropicLLM:
         text = "".join(b.text for b in resp.content if b.type == "text")
         usage = getattr(resp, "usage", None)
         return LLMResult(text, getattr(usage, "input_tokens", 0) or 0, getattr(usage, "output_tokens", 0) or 0)
+
+
+class OpenAICompatibleLLM:
+    """Any server that speaks the OpenAI chat completions API (e.g. a hosted Qwen model).
+    Reads OPENAI_API_KEY and OPENAI_BASE_URL; the SDK retries rate limits and server errors itself."""
+
+    def __init__(self, client=None):
+        if client is None:
+            import openai
+
+            client = openai.AsyncOpenAI(max_retries=4, timeout=300)
+        self.client = client
+
+    async def complete(self, *, model: str, system: str, messages: list[dict], max_tokens: int) -> LLMResult:
+        resp = await self.client.chat.completions.create(
+            model=model, max_tokens=max_tokens, messages=[{"role": "system", "content": system}, *messages],
+        )
+        text = (resp.choices[0].message.content or "") if resp.choices else ""
+        usage = getattr(resp, "usage", None)
+        return LLMResult(text, getattr(usage, "prompt_tokens", 0) or 0, getattr(usage, "completion_tokens", 0) or 0)
+
+
+def provider() -> str:
+    """'openai' or 'anthropic'. AEROTRACE_PROVIDER decides; otherwise whichever key is set (Anthropic if both)."""
+    chosen = os.environ.get("AEROTRACE_PROVIDER", "").strip().lower()
+    if chosen in ("openai", "anthropic"):
+        return chosen
+    if os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN"):
+        return "anthropic"
+    return "openai" if os.environ.get("OPENAI_API_KEY") else "anthropic"
+
+
+def has_credentials() -> bool:
+    if provider() == "openai":
+        return bool(os.environ.get("OPENAI_API_KEY"))
+    return bool(os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN"))
+
+
+def make_llm() -> LLM:
+    return OpenAICompatibleLLM() if provider() == "openai" else AnthropicLLM()
 
 
 # ---------------------------------------------------------------- the graph, read from SQLite
@@ -205,6 +265,11 @@ class GraphView:
         self._by_name: dict[str, list[str]] = {}
         for i, f in self.fns.items():
             self._by_name.setdefault(f.name, []).append(i)
+        self.readers: dict[str, set[str]] = {}  # field -> functions that read it
+        for fid, fields in self.reads.items():
+            for fl in fields:
+                self.readers.setdefault(fl, set()).add(fid)
+        self._impact: dict[str, Impact] = {}
 
     def source(self, fn: Fn) -> str | None:
         """Only this function's lines, read from the repo checkout."""
@@ -227,6 +292,140 @@ class GraphView:
             seen.add(x)
             todo.extend(self.callees.get(x, {}))
         return seen
+
+    def impact(self, fid: str) -> Impact:
+        """What a change to this function could reach, from the graph alone (cached per run)."""
+        if fid in self._impact:
+            return self._impact[fid]
+        upstream: set[str] = set()
+        todo = list(self.callers.get(fid, ()))
+        while todo:
+            x = todo.pop()
+            if x in upstream or x == fid:
+                continue
+            upstream.add(x)
+            todo.extend(self.callers.get(x, ()))
+        data_users = {
+            fl: sorted(self.readers.get(fl, set()) - {fid}, key=lambda i: self.fns[i].qname)
+            for fl in sorted(self.writes.get(fid, {}), key=lambda fl: self.fields[fl].qname)
+        }
+        data_users = {fl: users for fl, users in data_users.items() if users}
+        direct = set(self.callers.get(fid, ())) | {u for users in data_users.values() for u in users}
+        affected = upstream | direct
+        here = self.fns[fid].file
+        files = sorted({self.fns[a].file for a in affected} - {here})
+        direct_files = len({self.fns[a].file for a in direct} - {here})
+        eps = [e for e in self.entry_points if e in upstream]
+        is_ep = fid in self.entry_points
+        level, reason = impact_level(len(direct), direct_files, len(affected), is_ep)
+        out = Impact(
+            direct_callers=len(self.callers.get(fid, ())), direct=len(direct), direct_files=direct_files,
+            upstream=len(upstream), affected=affected, files=files, entry_points=eps, is_entry_point=is_ep,
+            data_users=data_users, level=level, reason=reason,
+        )
+        self._impact[fid] = out
+        return out
+
+
+@dataclass
+class Impact:
+    direct_callers: int
+    direct: int  # functions that use it directly: its callers + other readers of data it changes
+    direct_files: int  # other files those are in
+    upstream: int  # callers at any distance
+    affected: set[str]  # function ids: callers at any distance + other readers of data it changes
+    files: list[str]  # other files holding affected code
+    entry_points: list[str]  # other entry points that lead here
+    is_entry_point: bool
+    data_users: dict[str, list[str]]  # field it writes -> other functions that read that field
+    level: str  # "low" | "medium" | "high"
+    reason: str  # the level in plain words
+
+    def as_json(self, view: GraphView) -> dict:
+        """What is stored with the summary and shown in the UI."""
+        qnames = lambda ids: list(dict.fromkeys(view.fns[i].qname for i in ids))  # overloads share a name
+        eps = qnames(self.entry_points)
+        return {
+            "level": self.level,
+            "reason": self.reason,
+            "direct_callers": self.direct_callers,
+            "direct_dependents": self.direct,
+            "callers_any_distance": self.upstream,
+            "affected": len(self.affected),
+            "files": self.files[:MAX_IMPACT_NAMES],
+            "files_total": len(self.files),
+            "is_entry_point": self.is_entry_point,
+            "entry_points": eps[:MAX_IMPACT_NAMES],
+            "entry_points_total": len(eps),
+            "data_users": [
+                {"field": view.fields[fl].qname, "readers": qnames(users)[:MAX_IMPACT_NAMES], "readers_total": len(qnames(users))}
+                for fl, users in list(self.data_users.items())[:MAX_IMPACT_NAMES]
+            ],
+        }
+
+
+def impact_level(direct: int, direct_files: int, ripple: int, is_entry_point: bool) -> tuple[str, str]:
+    """(level, reason). Counts only: the same numbers always give the same answer.
+
+    The level is set by what uses the function directly (its callers and the readers of data it changes):
+    that is what must be checked when it changes. Callers of callers are only reported: in a big program
+    almost everything eventually leads back to the main loop, so they cannot tell functions apart."""
+    if not direct:
+        if is_entry_point:
+            return "low", "Nothing else in this project calls it, but the program starts here, so a change changes what the program does."
+        return "low", "Nothing else in this project calls it or reads the data it changes."
+    what = f"{direct} function{'s' if direct != 1 else ''} use{'s' if direct == 1 else ''} it directly"
+    where = f", in {direct_files} other file{'s' if direct_files != 1 else ''}" if direct_files else ""
+    more = f" Through them, a change could reach {ripple} functions in all." if ripple > direct else ""
+    reason = f"{what} (they call it or read the data it changes){where}.{more}"
+    if direct >= IMPACT_HIGH or direct_files >= IMPACT_HIGH_FILES:
+        return "high", reason
+    if direct >= IMPACT_MEDIUM or direct_files >= IMPACT_MEDIUM_FILES:
+        return "medium", reason
+    return "low", reason
+
+
+# ---------------------------------------------------------------- effort (a planning aid, not a quote)
+
+# Hours to update and retest ONE affected function, by its severity; bigger functions take longer
+# (see size_factor). Like the severity level, effort is driven by direct users: functions further away
+# are covered by one full test run (RETEST_HOURS) instead of being checked one by one. Virtual calls can
+# make that outer ring hundreds of functions wide, and charging each would swamp the estimate.
+# Making the change itself costs CHANGE_HOURS, scaled by size. Tune these to your team.
+EFFORT_HOURS = {"high": 1.0, "medium": 0.0, "low": 0.0}
+CHANGE_HOURS = 1.0
+RETEST_HOURS = 1.0
+EFFORT_RANGE = (0.75, 1.5)  # the total is shown as a range: the estimate times these
+
+
+def size_factor(loc: int) -> float:
+    return 1.0 if loc <= 20 else 1.5 if loc <= 80 else 2.0
+
+
+def affected_severity(distance: int, is_entry_point: bool) -> tuple[str, str]:
+    """(severity, why) for one function a change could reach. Nearer means more likely to break."""
+    if distance <= 1:
+        return "high", "Uses it directly, so it breaks first if the behaviour changes."
+    if distance == 2 or is_entry_point:
+        why = "The program starts here, so a change shows up in what the program does." if is_entry_point and distance > 2 \
+            else "One step removed: affected if the change passes through its caller."
+        return "medium", why
+    return "low", f"{distance} steps away: only affected if the change travels all the way up."
+
+
+def effort_hours(severity: str, loc: int) -> float:
+    """Hours to update and retest one affected function, to the nearest quarter hour."""
+    return round(EFFORT_HOURS[severity] * size_factor(loc) * 4) / 4
+
+
+def effort_range(own_loc: int, affected_hours: float, reaches_further: bool) -> dict:
+    """The whole job: make the change, update and retest its direct users, and (when the change reaches
+    further) one full test run. Rounded to half hours."""
+    change = CHANGE_HOURS * size_factor(own_loc)
+    checks = affected_hours + (RETEST_HOURS if reaches_further else 0.0)
+    total = change + checks
+    half = lambda x: max(0.5, round(x * 2) / 2)
+    return {"change": change, "checks": checks, "low": half(total * EFFORT_RANGE[0]), "high": half(total * EFFORT_RANGE[1])}
 
 
 # ---------------------------------------------------------------- 1. ordering
@@ -357,6 +556,24 @@ def build_function_section(
             f"(lines {', '.join(map(str, fn.indirect_lines[:10]))}); what they call is unknown."
         )
 
+    facts = view.impact(fn.id).as_json(view)
+    names = lambda shown, total: ", ".join(shown) + (f" (and {total - len(shown)} more)" if total > len(shown) else "")
+    impact_lines = [
+        "Impact (worked out from the code graph):",
+        f"- Functions that use it directly (call it, or read data it changes): {facts['direct_dependents']}",
+        f"- Callers at any distance (callers, their callers, and so on): {facts['callers_any_distance']}",
+        "- Other files with code that could be affected: " + (names(facts["files"], facts["files_total"]) or "(none)"),
+        "- It is an entry point: the program starts here." if facts["is_entry_point"] else None,
+        "- Entry points that lead here: " + (names(facts["entry_points"], facts["entry_points_total"]) or "(none found)"),
+        "- Data it changes and who else reads it:",
+        *(
+            [f"  - {d['field']}: read by {names(d['readers'], d['readers_total'])}" for d in facts["data_users"]]
+            or ["  - (nothing else reads the data it changes)"]
+        ),
+        f"- Impact level: {facts['level']}. {facts['reason']}",
+    ]
+    impact_lines = [line for line in impact_lines if line]
+
     class_doc = view.class_docs.get(cls or "")
     head = [
         f"### Function: {fn.qname}   (id: {fn.id})",
@@ -374,12 +591,15 @@ def build_function_section(
         "Writes fields:", *fmt(writes),
         *extra,
         "Called by (names only): " + (", ".join(caller_names) or "(nothing in this project)"),
+        *impact_lines,
     ]
     src = view.source(fn)
     fixed = len("\n".join(head + tail)) + 60
     src_budget = max(budget - fixed, 2000)
     src_text = trim_middle(src, src_budget) if src is not None else "(source code not available)"
     text = "\n".join([*head, "Source:", "```cpp", src_text, "```", *tail])
+    # Like the callers, the impact facts are left out of the cache key: a new caller somewhere up the tree
+    # should not pay to re-explain everything below it. The stored impact numbers are refreshed every run.
     parts = [fn.qname, fn.signature, src_text, callee_parts, [f.qname for f in reads], [f.qname for f in writes],
              fn.external_calls, fn.indirect_lines]
     return text, parts
@@ -416,6 +636,9 @@ class Answer:
     outputs: str = ""
     side_effects: list[str] = field(default_factory=list)
     mentions: list[str] = field(default_factory=list)
+    role: str = ""
+    change_risks: list[str] = field(default_factory=list)
+    business_impact: str = ""
 
 
 def _as_text(v) -> str:
@@ -470,6 +693,8 @@ def parse_answers(text: str, ids: list[str]) -> tuple[dict[str, Answer], dict[st
             short=_as_text(it.get("short")), detailed=_as_text(it.get("detailed")),
             inputs=_as_text(it.get("inputs")), outputs=_as_text(it.get("outputs")),
             side_effects=_as_list(it.get("side_effects")), mentions=_as_list(it.get("mentions")),
+            role=_as_text(it.get("role")), change_risks=_as_list(it.get("change_risks")),
+            business_impact=_as_text(it.get("business_impact")),
         )
     return answers, problems
 
@@ -487,7 +712,9 @@ def verify_answer(view: GraphView, fn: Fn, ans: Answer) -> list[str]:
     callers = set(view.callers.get(fn.id, ()))
     reads = set(view.reads.get(fn.id, {}))
     writes = set(view.writes.get(fn.id, {}))
-    near = callees | callers | reads | writes | {fn.id}
+    imp = view.impact(fn.id)
+    impact_names = set(imp.entry_points) | {u for users in imp.data_users.values() for u in users}
+    near = callees | callers | reads | writes | impact_names | {fn.id}
 
     def candidates(m: str) -> set[str]:
         out = set()
@@ -619,6 +846,7 @@ class Explainer:
         cached = calls = tin = tout = fns = 0
         models: dict[str, int] = {}
         cost = {}  # model -> [input tokens, output tokens]
+        chosen: list[tuple[Fn, str]] = []  # (function, model), in the order they will be explained
         budget = max_functions
         for g in plan.groups:
             if self.is_cached(g):
@@ -631,6 +859,7 @@ class Explainer:
                 budget -= len(g)
             for chunk in _chunks(g):
                 group, prompt, _, model = self._prepare(chunk)
+                chosen += [(f, model) for f in group]
                 calls += 1
                 fns += len(chunk)
                 t_in = (len(SYSTEM_PROMPT) + len(prompt)) // 4
@@ -641,6 +870,10 @@ class Explainer:
                 c = cost.setdefault(model, [0, 0])
                 c[0] += t_in
                 c[1] += t_out
+        if chosen:
+            self.log(f"Functions chosen to explain ({len(chosen)}):")
+            for f, model in chosen:
+                self.log(f"  - {f.qname}  ({f.file}:{f.start}, {model})")
         dollars = None
         if models and all(m in PRICES for m in models):
             dollars = sum((i * PRICES[m][0] + o * PRICES[m][1]) / 1e6 for m, (i, o) in cost.items())
@@ -659,16 +892,34 @@ class Explainer:
             self.result.templates += 1
         self.conn.commit()
 
-    def _save(self, fid, short, detailed, inputs, outputs, side_effects, mentions, model, h, verified, reasons) -> None:
+    def _save(self, fid, short, detailed, inputs, outputs, side_effects, mentions, model, h, verified, reasons,
+              role: str = "", change_risks: list[str] | None = None, business_impact: str = "") -> None:
+        imp = self.view.impact(fid)
         self.conn.execute(
             """INSERT OR REPLACE INTO summaries (function_id, short, detailed, model, prompt_hash, created_at,
-                   inputs, outputs, side_effects_json, mentions_json, verified, reasons_json)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
+                   inputs, outputs, side_effects_json, mentions_json, verified, reasons_json,
+                   role, change_risks_json, business_impact, impact_level, impact_json)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (fid, short, detailed, model, h, now(), inputs, outputs, json.dumps(side_effects), json.dumps(mentions),
-             int(verified), json.dumps(reasons)),
+             int(verified), json.dumps(reasons), role or None, json.dumps(change_risks or []), business_impact or None,
+             imp.level, json.dumps(imp.as_json(self.view))),
         )
         self.stored_hash[fid] = h
         self.summaries[fid] = short
+
+    def write_impact(self) -> None:
+        """Refresh the impact numbers on every saved summary. Graph only, no API: callers change without the
+        function itself changing, and a cached explanation must not keep showing old numbers."""
+        rows = [r["function_id"] for r in self.conn.execute("SELECT function_id FROM summaries")]
+        self.conn.executemany(
+            "UPDATE summaries SET impact_level = ?, impact_json = ? WHERE function_id = ?",
+            [
+                (imp.level, json.dumps(imp.as_json(self.view)), fid)
+                for fid in rows if fid in self.view.fns
+                for imp in [self.view.impact(fid)]
+            ],
+        )
+        self.conn.commit()
 
     # -- one call (with the concurrency limit)
     async def _ask(self, model: str, messages: list[dict], max_tokens: int) -> str:
@@ -722,7 +973,8 @@ class Explainer:
             r = reasons[i]
             if a is None:
                 a = Answer(short="No summary: the model's answer could not be read.", detailed="")
-            self._save(i, a.short, a.detailed, a.inputs, a.outputs, a.side_effects, a.mentions, model, h, not r, r)
+            self._save(i, a.short, a.detailed, a.inputs, a.outputs, a.side_effects, a.mentions, model, h, not r, r,
+                       role=a.role, change_risks=a.change_risks, business_impact=a.business_impact)
             self.result.unverified += bool(r)
         self.conn.commit()
 
@@ -896,6 +1148,7 @@ class Explainer:
         plan = make_plan(self.view, self.targets(only_reachable))
         self.write_templates()
         await self.run_functions(plan, max_functions)
+        self.write_impact()
         rebuild_fts(self.conn)
         if rollups:
             await self.run_rollups()
@@ -937,6 +1190,7 @@ def main(argv: list[str] | None = None, llm: LLM | None = None) -> int:
     ap.add_argument("--data-dir", default=None)
     ap.add_argument("--offline", action="store_true", help="never call the API: keep saved explanations, write template sentences (same as AEROTRACE_OFFLINE=1)")
     args = ap.parse_args(argv)
+    load_env_file()
     offline = args.offline or offline_requested()
 
     data_dir = Path(args.data_dir or os.environ.get("AEROTRACE_DATA") or DATA_DIR)
@@ -950,9 +1204,9 @@ def main(argv: list[str] | None = None, llm: LLM | None = None) -> int:
             llm = OfflineLLM()
         if llm is None:
             try:
-                llm = AnthropicLLM()
+                llm = make_llm()
             except Exception as e:  # missing credentials etc.
-                print(f"error: could not create the Anthropic client ({e})", file=sys.stderr)
+                print(f"error: could not create the {provider()} client ({e})", file=sys.stderr)
                 return 2
         ex = Explainer(conn, llm, concurrency=args.concurrency, offline=offline)
         plan = make_plan(ex.view, ex.targets(args.only_reachable_from_entry_points))
@@ -978,7 +1232,8 @@ def main(argv: list[str] | None = None, llm: LLM | None = None) -> int:
         except Exception as e:
             name = type(e).__name__
             if "Authentication" in name or "PermissionDenied" in name:
-                print(f"error: the API rejected the credentials ({e}). Set ANTHROPIC_API_KEY or run `ant auth login`.", file=sys.stderr)
+                fix = "check OPENAI_API_KEY and OPENAI_BASE_URL" if provider() == "openai" else "set ANTHROPIC_API_KEY or run `ant auth login`"
+                print(f"error: the API rejected the credentials ({e}); {fix}.", file=sys.stderr)
                 return 2
             raise
         print(

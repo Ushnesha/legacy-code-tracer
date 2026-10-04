@@ -16,6 +16,15 @@ REPOS = {
 }
 
 
+@pytest.fixture(autouse=True)
+def no_real_credentials(monkeypatch):
+    """Tests never read the developer's .env and never see a real key, so nothing can reach a paid API."""
+    monkeypatch.setattr("extractor.common.explain.load_env_file", lambda *a, **k: [])
+    monkeypatch.setattr("scripts.demo.load_env_file", lambda *a, **k: [])
+    for var in ("OPENAI_API_KEY", "OPENAI_BASE_URL", "AEROTRACE_PROVIDER", "ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"):
+        monkeypatch.delenv(var, raising=False)
+
+
 def ensure_repo(name: str) -> Path:
     url, marker = REPOS[name]
     path = ROOT / "repos" / name

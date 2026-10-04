@@ -16,3 +16,6 @@ web/playwright-report/
 
 .DS_Store
 web/openapi.json.bak
+
+# secrets (API keys)
+.env

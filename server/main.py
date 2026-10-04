@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import Iterator, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
+
+from extractor.common import explain as X  # the impact rules, shared with the explain step
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -108,10 +110,16 @@ def summary_dict(row: sqlite3.Row) -> dict:
     d = dict(row)
     d.pop("function_id", None)
     d.pop("prompt_hash", None)
-    for col, name in (("side_effects_json", "side_effects"), ("mentions_json", "mentions"), ("reasons_json", "reasons")):
+    for col, name in (
+        ("side_effects_json", "side_effects"), ("mentions_json", "mentions"), ("reasons_json", "reasons"),
+        ("change_risks_json", "change_risks"),
+    ):
         if col in d:
             raw = d.pop(col)
             d[name] = json.loads(raw) if raw else []
+    if "impact_json" in d:
+        raw = d.pop("impact_json")
+        d["impact"] = json.loads(raw) if raw else None
     if "verified" in d:
         d["verified"] = None if d["verified"] is None else bool(d["verified"])
     return d
@@ -573,11 +581,86 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
                 items.append(d)
             levels.append({"distance": distance, "functions": sorted(items, key=fn_order)})
             frontier = ids
+        root = brief(root_row)
+        total = sum(len(lv["functions"]) for lv in levels)
         return {
-            "root": brief(root_row),
+            "root": root,
             "max_depth": depth,
-            "total": sum(len(lv["functions"]) for lv in levels),
+            "total": total,
             "levels": levels,
+            **change_impact(conn, fid, root, levels, seen, frontier),
+        }
+
+    def change_impact(conn, fid: str, root: dict, levels: list[dict], seen: set[str], frontier: list[str]) -> dict:
+        """Severity, how each function is affected, and rough effort. From the graph alone (no AI), with the
+        same rules as the explain step, so this tab and the Explain tab agree."""
+        # keep counting callers past `depth` (ids only), so the overall reason matches the Explain tab
+        upstream = set(seen)
+        while frontier:
+            nxt = []
+            for i in range(0, len(frontier), 400):
+                chunk = frontier[i : i + 400]
+                for r in conn.execute(
+                    f"SELECT source FROM edges WHERE target IN ({in_clause(len(chunk))}) AND kind IN ('calls','may_call')", chunk
+                ):
+                    if r["source"] not in upstream:
+                        upstream.add(r["source"])
+                        nxt.append(r["source"])
+            frontier = nxt
+        upstream.discard(fid)
+
+        # functions that read data this one changes: they use it directly, like a caller
+        readers: dict[str, set[str]] = {}
+        for r in conn.execute(
+            """SELECT r.source AS reader, fl.name AS field FROM edges w
+               JOIN edges r ON r.target = w.target AND r.kind = 'reads'
+               JOIN fields fl ON fl.id = w.target
+               WHERE w.source = ? AND w.kind = 'writes' AND r.source != ?""",
+            (fid, fid),
+        ):
+            readers.setdefault(r["reader"], set()).add(r["field"])
+
+        found: dict[str, tuple[int, dict]] = {f["id"]: (lv["distance"], f) for lv in levels for f in lv["functions"]}
+        missing = [i for i in readers if i not in found]
+        for i in range(0, len(missing), 400):
+            chunk = missing[i : i + 400]
+            for r in conn.execute(f"SELECT {FN_COLS} FROM {FN_FROM} WHERE f.id IN ({in_clause(len(chunk))})", chunk):
+                found[r["id"]] = (1, brief(r))
+        name_of = {i: d["name"] for i, (_, d) in found.items()} | {fid: root["name"]}
+
+        affected = []
+        for i, (distance, d) in found.items():
+            how = []
+            if distance == 1 and d.get("via"):
+                how.append("May call it, through a virtual call" if d["via"] == ["may_call"] else "Calls it directly")
+            elif distance > 1:
+                how.append("Calls it through " + ", ".join(dict.fromkeys(name_of.get(c, "another function") for c in d["calls"][:3])))
+            if i in readers:
+                how.append(f"Reads {', '.join(sorted(readers[i]))}, which this function changes")
+                distance = 1
+            severity, why = X.affected_severity(distance, d["is_entry_point"])
+            base = {k: v for k, v in d.items() if k not in ("calls", "via")}
+            affected.append({
+                **base, "distance": distance, "how": how, "severity": severity, "severity_reason": why,
+                "effort_hours": X.effort_hours(severity, d["loc"]),
+            })
+        rank = {"high": 0, "medium": 1, "low": 2}
+        affected.sort(key=lambda a: (rank[a["severity"]], a["distance"], a["file"], a["qualified_name"]))
+
+        direct = [a for a in affected if a["distance"] == 1]
+        direct_files = len({a["file"] for a in direct} - {root["file"]})
+        severity, reason = X.impact_level(len(direct), direct_files, len(upstream | set(readers)), root["is_entry_point"])
+        effort = X.effort_range(root["loc"], sum(a["effort_hours"] for a in affected), len(affected) > len(direct))
+
+        s = conn.execute("SELECT business_impact, model, verified FROM summaries WHERE function_id = ?", (fid,)).fetchone()
+        text = s["business_impact"] if s else None
+        return {
+            "severity": severity,
+            "severity_reason": reason,
+            "effort": effort,
+            "affected": affected,
+            "business_impact": text,
+            "business_impact_checked": None if not text or s["verified"] is None else bool(s["verified"]),
         }
 
     # ---- a path between two functions (used to add a data item's writers to the tree)
