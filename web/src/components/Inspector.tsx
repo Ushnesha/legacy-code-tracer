@@ -1,22 +1,26 @@
 import { useRef } from "react";
+import { useFunction } from "../queries";
 import { useSelectedFnId } from "../graph/treeStore";
 import { useStore, type TabId } from "../store";
 import { CodeTab } from "./CodeTab";
 import { DataTab } from "./DataTab";
 import { ExplainTab } from "./ExplainTab";
 import { ImpactTab } from "./ImpactTab";
+import { ReviewTab } from "./ReviewTab";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "explain", label: "Explain" },
   { id: "code", label: "Code" },
   { id: "data", label: "Data" },
   { id: "impact", label: "Impact" },
+  { id: "review", label: "Review" },
 ];
 
 export function Inspector() {
   const { repo, tab } = useStore();
   const rootId = useSelectedFnId(); // the selected node, or the root when nothing is selected
   const setTab = useStore((s) => s.setTab);
+  const flagged = useFunction(repo, rootId).data?.flags.length ?? 0; // shared with the Explain tab
   const refs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const onKey = (e: React.KeyboardEvent, i: number) => {
@@ -53,6 +57,11 @@ export function Inspector() {
             className={`px-4 py-2.5 -mb-px border-b-2 ${tab === t.id ? "border-ink font-semibold" : "border-transparent text-muted hover:text-ink"}`}
           >
             {t.label}
+            {t.id === "review" && flagged > 0 && (
+              <span data-testid="review-count" className="ml-1.5 rounded-node border border-unverified px-1.5 text-sm text-unverified">
+                {flagged}
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -67,6 +76,8 @@ export function Inspector() {
           <CodeTab repo={repo!} id={rootId!} />
         ) : tab === "data" ? (
           <DataTab repo={repo!} id={rootId} />
+        ) : tab === "review" ? (
+          <ReviewTab repo={repo!} id={rootId!} />
         ) : (
           <ImpactTab repo={repo!} id={rootId!} />
         )}

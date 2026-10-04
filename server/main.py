@@ -15,6 +15,7 @@ from typing import Iterator, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 
+from extractor.common.flags import function_flags
 from extractor.common import explain as X  # the impact rules, shared with the explain step
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -402,6 +403,7 @@ def create_app(data_dir: Path | None = None) -> FastAPI:
             "overridden_by": sorted((brief(r) for r in overridden_by), key=fn_order),
             "source": read_source(resolve_repo_dir(m.get("repo_dir"), repo), row["file"], row["line_start"], row["line_end"]),
             "github_permalink": permalink,
+            "flags": function_flags(node, len(callees_of(conn, fid, "may_call"))),
         }
 
     # ---- tree

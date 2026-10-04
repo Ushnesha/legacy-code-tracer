@@ -170,7 +170,7 @@ def test_noise_functions_get_template_sentences_without_the_api(db):
     llm = FakeLLM()
     ex, res = run(conn, llm)
     r = summary(conn, ex, "reader")
-    assert r["short"] == "Returns the value of v." and r["model"] == "template" and r["verified"] == 1
+    assert r["short"] == "Returns the value of v." and r["model"] == "template" and r["verified"] is None
     assert llm.asked_about("reader") == [] and llm.asked_about("get") == [] and llm.asked_about("set") == []
     assert summary(conn, ex, "Box::set")["short"] == "Sets v to the value it is given."
     assert res.templates >= 3

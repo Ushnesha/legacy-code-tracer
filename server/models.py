@@ -149,6 +149,13 @@ class Callees(BaseModel):
     may_call: list[FnWithEdge]
 
 
+class ReviewFlag(BaseModel):
+    code: str
+    severity: Literal["review", "note"]  # "review": a person should look before relying on the explanation
+    message: str  # plain English
+    lines: list[int]
+
+
 class FunctionDetail(BaseModel):
     node: dict[str, Any]
     summary: SummaryInfo | None
@@ -161,6 +168,7 @@ class FunctionDetail(BaseModel):
     overridden_by: list[FnBrief]
     source: SourceInfo
     github_permalink: str | None
+    flags: list[ReviewFlag] = []  # places the graph is incomplete, worked out from the graph alone
 
 
 class TreeNode(FnBrief):

@@ -646,6 +646,11 @@ export interface components {
             source: components["schemas"]["SourceInfo"];
             /** Github Permalink */
             github_permalink: string | null;
+            /**
+             * Flags
+             * @default []
+             */
+            flags: components["schemas"]["ReviewFlag"][];
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -800,6 +805,20 @@ export interface components {
             summaries: number | null;
             /** Error */
             error: string | null;
+        };
+        /** ReviewFlag */
+        ReviewFlag: {
+            /** Code */
+            code: string;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "review" | "note";
+            /** Message */
+            message: string;
+            /** Lines */
+            lines: number[];
         };
         /** Rollup */
         Rollup: {

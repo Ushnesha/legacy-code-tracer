@@ -1997,6 +1997,14 @@
               }
             ],
             "title": "Github Permalink"
+          },
+          "flags": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewFlag"
+            },
+            "type": "array",
+            "title": "Flags",
+            "default": []
           }
         },
         "type": "object",
@@ -2531,6 +2539,41 @@
           "error"
         ],
         "title": "RepoInfo"
+      },
+      "ReviewFlag": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "review",
+              "note"
+            ],
+            "title": "Severity"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "lines": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Lines"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "message",
+          "lines"
+        ],
+        "title": "ReviewFlag"
       },
       "Rollup": {
         "properties": {
