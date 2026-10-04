@@ -1,0 +1,1041 @@
+{
+  "manifest": {
+    "run_id": "sha256:7d98fd08f4c9a0c486fda7520c365a5fbe0ad0d50df6cdfd66e54866563a7738",
+    "repo_path": "/Users/apple/Desktop/aerotech/aerotrace-team-kit/extractor/ada/tests/fixture",
+    "commit": null,
+    "dirty": false,
+    "variant": "baseline",
+    "defines": [],
+    "include_paths": [],
+    "build_context": "UNKNOWN",
+    "analyzer_versions": {
+      "tree_sitter_ada": "0.1.0"
+    },
+    "created_at": "2026-10-04T02:42:38.548811Z"
+  },
+  "nodes": [
+    {
+      "id": "sha256:c763104e6daa739c0745e41d3ab5b35a28d1d06b0bd1fa93e5ccc5131599c7aa",
+      "kind": "File",
+      "name": "counters.adb",
+      "qualified_name": "src/counters.adb",
+      "file": "src/counters.adb",
+      "start_line": 1,
+      "end_line": 36,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:d006cdf488c9209fcb8878eed88d9b37507f9f628bdefde5d258f7fd477d765e"
+      ],
+      "properties": {
+        "language": "ada"
+      }
+    },
+    {
+      "id": "sha256:1d39045823ff26ebc3526401f7bd6afb180bd018c8e11ac5aa02009f54c4f2d3",
+      "kind": "Function",
+      "name": "Bump",
+      "qualified_name": "Counters.Bump",
+      "file": "src/counters.adb",
+      "start_line": 2,
+      "end_line": 5,
+      "signature": "procedure Bump",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:98afe5d39a5ec3e83762a190bb5fd80ddb81632684d785983a4bcfff97ae991b"
+      ],
+      "properties": {
+        "language": "ada",
+        "container": "Counters",
+        "resolved": false
+      }
+    },
+    {
+      "id": "sha256:4c7f669ee7653386c5cb12377e7ed69a99f0d06b8d2b0da0c3814451ad1d5ecc",
+      "kind": "Function",
+      "name": "Compute",
+      "qualified_name": "Counters.Compute",
+      "file": "src/counters.adb",
+      "start_line": 7,
+      "end_line": 10,
+      "signature": "procedure Compute (Result : out Integer)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:50fadeb2520ff25511c79ec29d41f958771b6330fce5911cf462488ad86f8511"
+      ],
+      "properties": {
+        "language": "ada",
+        "container": "Counters",
+        "resolved": false
+      }
+    },
+    {
+      "id": "sha256:51792508825395a76f7446179b4f552c3f7229dbd3689a432d3b9ac3d5b59630",
+      "kind": "Function",
+      "name": "Accumulate",
+      "qualified_name": "Counters.Accumulate",
+      "file": "src/counters.adb",
+      "start_line": 12,
+      "end_line": 15,
+      "signature": "procedure Accumulate (Acc : in out Integer; Step : in Integer)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:74fa178cbfba0b85bd273e21255e80d235a9004759c1d9e23df1ba8a599a0abc"
+      ],
+      "properties": {
+        "language": "ada",
+        "container": "Counters",
+        "resolved": false
+      }
+    },
+    {
+      "id": "sha256:1d890fcc3ccaeb4b9bcb56a65a415e0f0e5c61e04444974823b01893253a8f41",
+      "kind": "Function",
+      "name": "Set",
+      "qualified_name": "Counters.Guard.Set",
+      "file": "src/counters.adb",
+      "start_line": 18,
+      "end_line": 21,
+      "signature": "procedure Set (V : Integer)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:e3f3fd106feba462eb2b8461d66d0e90e3861926be8c5553eb2d25afb4e3342f"
+      ],
+      "properties": {
+        "language": "ada",
+        "container": "Counters.Guard",
+        "resolved": false
+      }
+    },
+    {
+      "id": "sha256:4590908559e2dfa38070f9cdd6d96d2eb0af81162f76b9240acb6f1567a4983d",
+      "kind": "Function",
+      "name": "Get",
+      "qualified_name": "Counters.Guard.Get",
+      "file": "src/counters.adb",
+      "start_line": 23,
+      "end_line": 23,
+      "signature": "function Get return Integer",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:7cc0f2b772820927bdb1ba0ac8b4a2fb7b9e84bdf3b230de0128054455ff57e0"
+      ],
+      "properties": {
+        "language": "ada",
+        "container": "Counters.Guard",
+        "resolved": false
+      }
+    },
+    {
+      "id": "sha256:62b75bff02a2c3121fc4e18190117e07209f1e578e1403a74f030a8c4b4e2f52",
+      "kind": "Function",
+      "name": "Run",
+      "qualified_name": "Counters.Run",
+      "file": "src/counters.adb",
+      "start_line": 31,
+      "end_line": 34,
+      "signature": "procedure Run (CB : Callback)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:671b5a22ff431e24e14c84538f443ffc352b1f6b2dc7987bfb3dd69f582c8493"
+      ],
+      "properties": {
+        "language": "ada",
+        "container": "Counters",
+        "resolved": false
+      }
+    },
+    {
+      "id": "sha256:d1e145e0a0fe1189cacd5078508b7a6c224d5945ed1fb711e6d2925ec7b36b01",
+      "kind": "Function",
+      "name": "Worker",
+      "qualified_name": "Worker",
+      "file": "src/counters.adb",
+      "start_line": 26,
+      "end_line": 29,
+      "signature": "task body",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:bed2636b4ca5e12bd11877e69222ed10fc9e34e69ac305acb086118144617667"
+      ],
+      "properties": {
+        "language": "ada",
+        "entry_point": true,
+        "resolved": false
+      }
+    },
+    {
+      "id": "sha256:7ffb137ac739c5a58bb5a50c343d111685ec5389a0f806c660dd58dfb92d135b",
+      "kind": "File",
+      "name": "counters.ads",
+      "qualified_name": "src/counters.ads",
+      "file": "src/counters.ads",
+      "start_line": 1,
+      "end_line": 20,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:ed2790c480cf0e41a9d867be1a0592caa23db7dfab46afc8f9f4a5ba4dae97b4"
+      ],
+      "properties": {
+        "language": "ada"
+      }
+    },
+    {
+      "id": "sha256:67b469c7903f4059c6085f30e97fcfd77385111b3638f672aea7805dabb1da89",
+      "kind": "File",
+      "name": "main.adb",
+      "qualified_name": "src/main.adb",
+      "file": "src/main.adb",
+      "start_line": 1,
+      "end_line": 18,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:d3546a23c9463582974ed319b0ef849825aa53d1de96286ddc324dfd1eb7c41d"
+      ],
+      "properties": {
+        "language": "ada"
+      }
+    },
+    {
+      "id": "sha256:c38fdd051d0494ef536071d87198aff103ba938a1d60905e6f1ceade6aae8a7d",
+      "kind": "Function",
+      "name": "Main",
+      "qualified_name": "Main",
+      "file": "src/main.adb",
+      "start_line": 4,
+      "end_line": 17,
+      "signature": "procedure Main",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:2a6c6b4d43e49bc0b3f1e293a68df86706470203c63a6878c13c024d69f38c95"
+      ],
+      "properties": {
+        "language": "ada",
+        "container": null,
+        "resolved": false
+      }
+    },
+    {
+      "id": "sha256:d82533e44cf75ad383ea99de796caf7302804fdb0f35d312dd1b30ccc611d977",
+      "kind": "File",
+      "name": "shapes.adb",
+      "qualified_name": "src/shapes.adb",
+      "file": "src/shapes.adb",
+      "start_line": 1,
+      "end_line": 23,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:8f16c80ae3605b6cf50d886ba99f2d5b2685f0fb06b9515be38bf19f23a65e44"
+      ],
+      "properties": {
+        "language": "ada"
+      }
+    },
+    {
+      "id": "sha256:50bef696dccd5b9abf82ca18ee2e4213497123cea5dc14418d612419cc1c5db7",
+      "kind": "Function",
+      "name": "Draw",
+      "qualified_name": "Shapes.Draw",
+      "file": "src/shapes.adb",
+      "start_line": 4,
+      "end_line": 7,
+      "signature": "procedure Draw (S : Circle)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:0c34ec7b4bcd45dfe88092ac04adfafd86742bb5435faa5a70075e87fedb5990"
+      ],
+      "properties": {
+        "language": "ada",
+        "container": "Shapes",
+        "resolved": false
+      }
+    },
+    {
+      "id": "sha256:fe7fa3e561c422f8843bd5413741fadfc6812455cea5d0eae8b68848a8eb2b0f",
+      "kind": "Function",
+      "name": "Area",
+      "qualified_name": "Shapes.Area",
+      "file": "src/shapes.adb",
+      "start_line": 9,
+      "end_line": 9,
+      "signature": "function Area (S : Circle) return Integer",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:a2b06b59108a8c5d946ce932a6502fa8ae647017dbe22bfdb1fc9ef05474138a"
+      ],
+      "properties": {
+        "language": "ada",
+        "container": "Shapes",
+        "resolved": false
+      }
+    },
+    {
+      "id": "sha256:1932b7147069844c30f284d0ddb39b22a073466bfbf0a726b65133b24e306fb7",
+      "kind": "Function",
+      "name": "Draw",
+      "qualified_name": "Shapes.Draw",
+      "file": "src/shapes.adb",
+      "start_line": 11,
+      "end_line": 14,
+      "signature": "procedure Draw (S : Square)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:655cd7a1ae65d4e2834e59bd84197d3cbb164a41744a91289256537b75e594f1"
+      ],
+      "properties": {
+        "language": "ada",
+        "container": "Shapes",
+        "resolved": false
+      }
+    },
+    {
+      "id": "sha256:35d83198a84f2413f0642eaba538ba6f50fa24094fb0e6b7a621e4cd3af7fa30",
+      "kind": "Function",
+      "name": "Area",
+      "qualified_name": "Shapes.Area",
+      "file": "src/shapes.adb",
+      "start_line": 16,
+      "end_line": 16,
+      "signature": "function Area (S : Square) return Integer",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:292d691fa1717ce0a788a623ced2c5e3f1e2323d75d79bdd6fe9afc76d4e979e"
+      ],
+      "properties": {
+        "language": "ada",
+        "container": "Shapes",
+        "resolved": false
+      }
+    },
+    {
+      "id": "sha256:093545d47599d4e2f4d6e46bc0f84d95fa53df0e8ebe2cd765dd8747aad4cb55",
+      "kind": "Function",
+      "name": "Draw_All",
+      "qualified_name": "Shapes.Draw_All",
+      "file": "src/shapes.adb",
+      "start_line": 18,
+      "end_line": 21,
+      "signature": "procedure Draw_All (S : Shape'Class)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:038b56d1dfd47db106a3f0c0de9451a46e674349d44daa6d741768cf5868b7c0"
+      ],
+      "properties": {
+        "language": "ada",
+        "container": "Shapes",
+        "resolved": false
+      }
+    },
+    {
+      "id": "sha256:3e3cfe82be6b4c77536ee3208c80cca795167ef6b6a60ca8ba07f9ed7aef585d",
+      "kind": "File",
+      "name": "shapes.ads",
+      "qualified_name": "src/shapes.ads",
+      "file": "src/shapes.ads",
+      "start_line": 1,
+      "end_line": 23,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:9dba7bd45e649472039d0fc3d77f69928564a3d8844e09a297b5da04a7ba67e5"
+      ],
+      "properties": {
+        "language": "ada"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "sha256:c763104e6daa739c0745e41d3ab5b35a28d1d06b0bd1fa93e5ccc5131599c7aa",
+      "target": "sha256:1d39045823ff26ebc3526401f7bd6afb180bd018c8e11ac5aa02009f54c4f2d3",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:98afe5d39a5ec3e83762a190bb5fd80ddb81632684d785983a4bcfff97ae991b"
+      ],
+      "properties": {
+        "language": "ada",
+        "resolved": false
+      }
+    },
+    {
+      "source": "sha256:c763104e6daa739c0745e41d3ab5b35a28d1d06b0bd1fa93e5ccc5131599c7aa",
+      "target": "sha256:4c7f669ee7653386c5cb12377e7ed69a99f0d06b8d2b0da0c3814451ad1d5ecc",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:50fadeb2520ff25511c79ec29d41f958771b6330fce5911cf462488ad86f8511"
+      ],
+      "properties": {
+        "language": "ada",
+        "resolved": false
+      }
+    },
+    {
+      "source": "sha256:c763104e6daa739c0745e41d3ab5b35a28d1d06b0bd1fa93e5ccc5131599c7aa",
+      "target": "sha256:51792508825395a76f7446179b4f552c3f7229dbd3689a432d3b9ac3d5b59630",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:74fa178cbfba0b85bd273e21255e80d235a9004759c1d9e23df1ba8a599a0abc"
+      ],
+      "properties": {
+        "language": "ada",
+        "resolved": false
+      }
+    },
+    {
+      "source": "sha256:c763104e6daa739c0745e41d3ab5b35a28d1d06b0bd1fa93e5ccc5131599c7aa",
+      "target": "sha256:1d890fcc3ccaeb4b9bcb56a65a415e0f0e5c61e04444974823b01893253a8f41",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:e3f3fd106feba462eb2b8461d66d0e90e3861926be8c5553eb2d25afb4e3342f"
+      ],
+      "properties": {
+        "language": "ada",
+        "resolved": false
+      }
+    },
+    {
+      "source": "sha256:c763104e6daa739c0745e41d3ab5b35a28d1d06b0bd1fa93e5ccc5131599c7aa",
+      "target": "sha256:4590908559e2dfa38070f9cdd6d96d2eb0af81162f76b9240acb6f1567a4983d",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:7cc0f2b772820927bdb1ba0ac8b4a2fb7b9e84bdf3b230de0128054455ff57e0"
+      ],
+      "properties": {
+        "language": "ada",
+        "resolved": false
+      }
+    },
+    {
+      "source": "sha256:c763104e6daa739c0745e41d3ab5b35a28d1d06b0bd1fa93e5ccc5131599c7aa",
+      "target": "sha256:62b75bff02a2c3121fc4e18190117e07209f1e578e1403a74f030a8c4b4e2f52",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:671b5a22ff431e24e14c84538f443ffc352b1f6b2dc7987bfb3dd69f582c8493"
+      ],
+      "properties": {
+        "language": "ada",
+        "resolved": false
+      }
+    },
+    {
+      "source": "sha256:67b469c7903f4059c6085f30e97fcfd77385111b3638f672aea7805dabb1da89",
+      "target": "sha256:c38fdd051d0494ef536071d87198aff103ba938a1d60905e6f1ceade6aae8a7d",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:2a6c6b4d43e49bc0b3f1e293a68df86706470203c63a6878c13c024d69f38c95"
+      ],
+      "properties": {
+        "language": "ada",
+        "resolved": false
+      }
+    },
+    {
+      "source": "sha256:d82533e44cf75ad383ea99de796caf7302804fdb0f35d312dd1b30ccc611d977",
+      "target": "sha256:50bef696dccd5b9abf82ca18ee2e4213497123cea5dc14418d612419cc1c5db7",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:0c34ec7b4bcd45dfe88092ac04adfafd86742bb5435faa5a70075e87fedb5990"
+      ],
+      "properties": {
+        "language": "ada",
+        "resolved": false
+      }
+    },
+    {
+      "source": "sha256:d82533e44cf75ad383ea99de796caf7302804fdb0f35d312dd1b30ccc611d977",
+      "target": "sha256:fe7fa3e561c422f8843bd5413741fadfc6812455cea5d0eae8b68848a8eb2b0f",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:a2b06b59108a8c5d946ce932a6502fa8ae647017dbe22bfdb1fc9ef05474138a"
+      ],
+      "properties": {
+        "language": "ada",
+        "resolved": false
+      }
+    },
+    {
+      "source": "sha256:d82533e44cf75ad383ea99de796caf7302804fdb0f35d312dd1b30ccc611d977",
+      "target": "sha256:1932b7147069844c30f284d0ddb39b22a073466bfbf0a726b65133b24e306fb7",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:655cd7a1ae65d4e2834e59bd84197d3cbb164a41744a91289256537b75e594f1"
+      ],
+      "properties": {
+        "language": "ada",
+        "resolved": false
+      }
+    },
+    {
+      "source": "sha256:d82533e44cf75ad383ea99de796caf7302804fdb0f35d312dd1b30ccc611d977",
+      "target": "sha256:35d83198a84f2413f0642eaba538ba6f50fa24094fb0e6b7a621e4cd3af7fa30",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:292d691fa1717ce0a788a623ced2c5e3f1e2323d75d79bdd6fe9afc76d4e979e"
+      ],
+      "properties": {
+        "language": "ada",
+        "resolved": false
+      }
+    },
+    {
+      "source": "sha256:d82533e44cf75ad383ea99de796caf7302804fdb0f35d312dd1b30ccc611d977",
+      "target": "sha256:093545d47599d4e2f4d6e46bc0f84d95fa53df0e8ebe2cd765dd8747aad4cb55",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:038b56d1dfd47db106a3f0c0de9451a46e674349d44daa6d741768cf5868b7c0"
+      ],
+      "properties": {
+        "language": "ada",
+        "resolved": false
+      }
+    },
+    {
+      "source": "sha256:c38fdd051d0494ef536071d87198aff103ba938a1d60905e6f1ceade6aae8a7d",
+      "target": "sha256:4c7f669ee7653386c5cb12377e7ed69a99f0d06b8d2b0da0c3814451ad1d5ecc",
+      "type": "CALLS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:8eba26d40ab5263e0dfb6e330b27c580bb99b1e2194d4574dff7450be567963e"
+      ],
+      "properties": {
+        "language": "ada",
+        "call_site_line": 11,
+        "order": 1,
+        "resolved": false,
+        "via": "compute"
+      }
+    },
+    {
+      "source": "sha256:c38fdd051d0494ef536071d87198aff103ba938a1d60905e6f1ceade6aae8a7d",
+      "target": "sha256:51792508825395a76f7446179b4f552c3f7229dbd3689a432d3b9ac3d5b59630",
+      "type": "CALLS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:564c92f7de50e84f5828fcd7eb4f282191a77bbefcbbe56e40a422a821999cca"
+      ],
+      "properties": {
+        "language": "ada",
+        "call_site_line": 12,
+        "order": 2,
+        "resolved": false,
+        "via": "accumulate"
+      }
+    },
+    {
+      "source": "sha256:c38fdd051d0494ef536071d87198aff103ba938a1d60905e6f1ceade6aae8a7d",
+      "target": "sha256:093545d47599d4e2f4d6e46bc0f84d95fa53df0e8ebe2cd765dd8747aad4cb55",
+      "type": "CALLS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:37f11e367f4ecac228ffd246e12b1f031d01df53eb1f5e4ca6ea2e54241a9a7d"
+      ],
+      "properties": {
+        "language": "ada",
+        "call_site_line": 13,
+        "order": 3,
+        "resolved": false,
+        "via": "draw_all"
+      }
+    },
+    {
+      "source": "sha256:c38fdd051d0494ef536071d87198aff103ba938a1d60905e6f1ceade6aae8a7d",
+      "target": "sha256:093545d47599d4e2f4d6e46bc0f84d95fa53df0e8ebe2cd765dd8747aad4cb55",
+      "type": "CALLS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:a21b4c2c399883f8f7e3ae5d7213e3b5a53c30f5aeb688898cd91ae0dc73e879"
+      ],
+      "properties": {
+        "language": "ada",
+        "call_site_line": 14,
+        "order": 4,
+        "resolved": false,
+        "via": "draw_all"
+      }
+    },
+    {
+      "source": "sha256:c38fdd051d0494ef536071d87198aff103ba938a1d60905e6f1ceade6aae8a7d",
+      "target": "sha256:50bef696dccd5b9abf82ca18ee2e4213497123cea5dc14418d612419cc1c5db7",
+      "type": "MAY_CALL",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:c62a373dc27336f3a07b63d8989ccc02c98707ec9e4883ae2d44c532af150fb9"
+      ],
+      "properties": {
+        "language": "ada",
+        "call_site_line": 15,
+        "order": 5,
+        "resolved": false,
+        "via": "draw"
+      }
+    },
+    {
+      "source": "sha256:c38fdd051d0494ef536071d87198aff103ba938a1d60905e6f1ceade6aae8a7d",
+      "target": "sha256:1932b7147069844c30f284d0ddb39b22a073466bfbf0a726b65133b24e306fb7",
+      "type": "MAY_CALL",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:c62a373dc27336f3a07b63d8989ccc02c98707ec9e4883ae2d44c532af150fb9"
+      ],
+      "properties": {
+        "language": "ada",
+        "call_site_line": 15,
+        "order": 5,
+        "resolved": false,
+        "via": "draw"
+      }
+    },
+    {
+      "source": "sha256:c38fdd051d0494ef536071d87198aff103ba938a1d60905e6f1ceade6aae8a7d",
+      "target": "sha256:1d890fcc3ccaeb4b9bcb56a65a415e0f0e5c61e04444974823b01893253a8f41",
+      "type": "CALLS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:c4b57802760346efe876f39a8f5688cf27ac75262be73804669b291ddfcf20af"
+      ],
+      "properties": {
+        "language": "ada",
+        "call_site_line": 16,
+        "order": 6,
+        "resolved": false,
+        "via": "set"
+      }
+    },
+    {
+      "source": "sha256:50bef696dccd5b9abf82ca18ee2e4213497123cea5dc14418d612419cc1c5db7",
+      "target": "sha256:1d39045823ff26ebc3526401f7bd6afb180bd018c8e11ac5aa02009f54c4f2d3",
+      "type": "CALLS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:f9ac6518cb7f9dd71dd3ba7e6acf6a94193ee20d4ab045c2b3ea30b44dba1db6"
+      ],
+      "properties": {
+        "language": "ada",
+        "call_site_line": 6,
+        "order": 1,
+        "resolved": false,
+        "via": "bump"
+      }
+    },
+    {
+      "source": "sha256:1932b7147069844c30f284d0ddb39b22a073466bfbf0a726b65133b24e306fb7",
+      "target": "sha256:1d39045823ff26ebc3526401f7bd6afb180bd018c8e11ac5aa02009f54c4f2d3",
+      "type": "CALLS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:beacaeeb98f8b572786db46971190ed94cb9674b244f13ddf3484629a7de0c0f"
+      ],
+      "properties": {
+        "language": "ada",
+        "call_site_line": 13,
+        "order": 1,
+        "resolved": false,
+        "via": "bump"
+      }
+    },
+    {
+      "source": "sha256:093545d47599d4e2f4d6e46bc0f84d95fa53df0e8ebe2cd765dd8747aad4cb55",
+      "target": "sha256:50bef696dccd5b9abf82ca18ee2e4213497123cea5dc14418d612419cc1c5db7",
+      "type": "MAY_CALL",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:0068bb61461196a1553c632c986756425f89a19eb054acb43bc37b4af1f30afa"
+      ],
+      "properties": {
+        "language": "ada",
+        "call_site_line": 20,
+        "order": 1,
+        "resolved": false,
+        "via": "draw"
+      }
+    },
+    {
+      "source": "sha256:093545d47599d4e2f4d6e46bc0f84d95fa53df0e8ebe2cd765dd8747aad4cb55",
+      "target": "sha256:1932b7147069844c30f284d0ddb39b22a073466bfbf0a726b65133b24e306fb7",
+      "type": "MAY_CALL",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:0068bb61461196a1553c632c986756425f89a19eb054acb43bc37b4af1f30afa"
+      ],
+      "properties": {
+        "language": "ada",
+        "call_site_line": 20,
+        "order": 1,
+        "resolved": false,
+        "via": "draw"
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "sha256:d006cdf488c9209fcb8878eed88d9b37507f9f628bdefde5d258f7fd477d765e",
+      "file": "src/counters.adb",
+      "start_line": 1,
+      "end_line": 36,
+      "start_byte": 0,
+      "end_byte": 637,
+      "snippet_hash": "sha256:b56677348055e9f5256f5f91acdceb17ab7fd95014a8ced69c1b01433a374b28",
+      "snippet": "package body Counters is",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:98afe5d39a5ec3e83762a190bb5fd80ddb81632684d785983a4bcfff97ae991b",
+      "file": "src/counters.adb",
+      "start_line": 2,
+      "end_line": 5,
+      "start_byte": 28,
+      "end_byte": 93,
+      "snippet_hash": "sha256:7371b4521f410a08d43928852208962c8d97f49a55692044ed6527815d69ec7c",
+      "snippet": "procedure Bump is",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:50fadeb2520ff25511c79ec29d41f958771b6330fce5911cf462488ad86f8511",
+      "file": "src/counters.adb",
+      "start_line": 7,
+      "end_line": 10,
+      "start_byte": 98,
+      "end_byte": 193,
+      "snippet_hash": "sha256:b5c7f3a9c55a67aea89d48e4ad59e6eb909c60dded10ad4275e2fd6f7f2907b4",
+      "snippet": "procedure Compute (Result : out Integer) is",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:74fa178cbfba0b85bd273e21255e80d235a9004759c1d9e23df1ba8a599a0abc",
+      "file": "src/counters.adb",
+      "start_line": 12,
+      "end_line": 15,
+      "start_byte": 198,
+      "end_byte": 316,
+      "snippet_hash": "sha256:07a5f3528a2aa91a4b351993edafc2873d080f47ff37fee2527c45383295f038",
+      "snippet": "procedure Accumulate (Acc : in out Integer; Step : in Integer) is",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:e3f3fd106feba462eb2b8461d66d0e90e3861926be8c5553eb2d25afb4e3342f",
+      "file": "src/counters.adb",
+      "start_line": 18,
+      "end_line": 21,
+      "start_byte": 351,
+      "end_byte": 429,
+      "snippet_hash": "sha256:67ca4268eba4d9faddbaf16992ca61604f38419a76cc2e0eba2fb6903bcc3d20",
+      "snippet": "procedure Set (V : Integer) is",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:7cc0f2b772820927bdb1ba0ac8b4a2fb7b9e84bdf3b230de0128054455ff57e0",
+      "file": "src/counters.adb",
+      "start_line": 23,
+      "end_line": 23,
+      "start_byte": 437,
+      "end_byte": 476,
+      "snippet_hash": "sha256:0861cff7e80482802f728b06c90a662495ab0c65e42f67a70006d811f88ada2d",
+      "snippet": "function Get return Integer is (Value);",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:671b5a22ff431e24e14c84538f443ffc352b1f6b2dc7987bfb3dd69f582c8493",
+      "file": "src/counters.adb",
+      "start_line": 31,
+      "end_line": 34,
+      "start_byte": 555,
+      "end_byte": 622,
+      "snippet_hash": "sha256:1aa277b157f9082688f096f0f75d3dc27e1f91902d1c68bd7c3d907d5cc16969",
+      "snippet": "procedure Run (CB : Callback) is",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:bed2636b4ca5e12bd11877e69222ed10fc9e34e69ac305acb086118144617667",
+      "file": "src/counters.adb",
+      "start_line": 26,
+      "end_line": 29,
+      "start_byte": 495,
+      "end_byte": 550,
+      "snippet_hash": "sha256:441525ba1a6e9fa3929266d11409d5787e29564001eb1c7ec9250249a4411995",
+      "snippet": "task body Worker is",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:ed2790c480cf0e41a9d867be1a0592caa23db7dfab46afc8f9f4a5ba4dae97b4",
+      "file": "src/counters.ads",
+      "start_line": 1,
+      "end_line": 20,
+      "start_byte": 0,
+      "end_byte": 437,
+      "snippet_hash": "sha256:d24901a98c71eed3aa332322f55c730b8bee7cc1e5c0bf97b031cc9a2531421e",
+      "snippet": "package Counters is",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:d3546a23c9463582974ed319b0ef849825aa53d1de96286ddc324dfd1eb7c41d",
+      "file": "src/main.adb",
+      "start_line": 1,
+      "end_line": 18,
+      "start_byte": 0,
+      "end_byte": 305,
+      "snippet_hash": "sha256:37e3ca95ab07da927d2d77d931849bbde4cba609ea0064391b3c6548640e8aaf",
+      "snippet": "with Counters;",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:2a6c6b4d43e49bc0b3f1e293a68df86706470203c63a6878c13c024d69f38c95",
+      "file": "src/main.adb",
+      "start_line": 4,
+      "end_line": 17,
+      "start_byte": 29,
+      "end_byte": 304,
+      "snippet_hash": "sha256:cea21843d70117effc6e74da4a2b3f437275350293bb9138e670fd6534e5dae3",
+      "snippet": "procedure Main is",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:8f16c80ae3605b6cf50d886ba99f2d5b2685f0fb06b9515be38bf19f23a65e44",
+      "file": "src/shapes.adb",
+      "start_line": 1,
+      "end_line": 23,
+      "start_byte": 0,
+      "end_byte": 436,
+      "snippet_hash": "sha256:a7758bcf5580dac110255420fe1933c36cad7e60266b4c21944cfd7882f9d952",
+      "snippet": "with Counters;",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:0c34ec7b4bcd45dfe88092ac04adfafd86742bb5435faa5a70075e87fedb5990",
+      "file": "src/shapes.adb",
+      "start_line": 4,
+      "end_line": 7,
+      "start_byte": 42,
+      "end_byte": 115,
+      "snippet_hash": "sha256:2c75bde7c5f8d2697a3aa8a72c7e81bcc276db64fd734bcabdc51a430062f16d",
+      "snippet": "procedure Draw (S : Circle) is",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:a2b06b59108a8c5d946ce932a6502fa8ae647017dbe22bfdb1fc9ef05474138a",
+      "file": "src/shapes.adb",
+      "start_line": 9,
+      "end_line": 9,
+      "start_byte": 120,
+      "end_byte": 191,
+      "snippet_hash": "sha256:89f9488216dd27d1639da80fce3670e35f798f6ee660d82111f84fc4b6025cba",
+      "snippet": "function Area (S : Circle) return Integer is (S.Radius * S.Radius * 3);",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:655cd7a1ae65d4e2834e59bd84197d3cbb164a41744a91289256537b75e594f1",
+      "file": "src/shapes.adb",
+      "start_line": 11,
+      "end_line": 14,
+      "start_byte": 196,
+      "end_byte": 269,
+      "snippet_hash": "sha256:b871c0c8e4efae51bda695484e7601f55c9d5e88194de12844d4e2e7cdcf0f32",
+      "snippet": "procedure Draw (S : Square) is",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:292d691fa1717ce0a788a623ced2c5e3f1e2323d75d79bdd6fe9afc76d4e979e",
+      "file": "src/shapes.adb",
+      "start_line": 16,
+      "end_line": 16,
+      "start_byte": 274,
+      "end_byte": 337,
+      "snippet_hash": "sha256:66bf69354d8d27cf97283fdf2eb0a94b6a80ea8cd3ae72dafa8fc71529d522b5",
+      "snippet": "function Area (S : Square) return Integer is (S.Side * S.Side);",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:038b56d1dfd47db106a3f0c0de9451a46e674349d44daa6d741768cf5868b7c0",
+      "file": "src/shapes.adb",
+      "start_line": 18,
+      "end_line": 21,
+      "start_byte": 342,
+      "end_byte": 423,
+      "snippet_hash": "sha256:4214041e4b5dfb15627f61dad86be532d5e6fdd1cc3a997ff25309e369645dfa",
+      "snippet": "procedure Draw_All (S : Shape'Class) is",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:9dba7bd45e649472039d0fc3d77f69928564a3d8844e09a297b5da04a7ba67e5",
+      "file": "src/shapes.ads",
+      "start_line": 1,
+      "end_line": 23,
+      "start_byte": 0,
+      "end_byte": 621,
+      "snippet_hash": "sha256:f3f0fa767aa893baa4d8ff5cb2f6552d63b212bb4a848173c095e98644077d75",
+      "snippet": "package Shapes is",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:8eba26d40ab5263e0dfb6e330b27c580bb99b1e2194d4574dff7450be567963e",
+      "file": "src/main.adb",
+      "start_line": 11,
+      "end_line": 11,
+      "start_byte": 160,
+      "end_byte": 181,
+      "snippet_hash": "sha256:ecedcb908471e440bec17eccdf1fd4008197c97b015d85fbde644c01f0689bf0",
+      "snippet": "Counters.Compute (X);",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:564c92f7de50e84f5828fcd7eb4f282191a77bbefcbbe56e40a422a821999cca",
+      "file": "src/main.adb",
+      "start_line": 12,
+      "end_line": 12,
+      "start_byte": 185,
+      "end_byte": 212,
+      "snippet_hash": "sha256:b4aa715cacc95dcf21cde0693bca887180b5be70605a4fe441ce53b68ce43c5b",
+      "snippet": "Counters.Accumulate (Y, X);",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:37f11e367f4ecac228ffd246e12b1f031d01df53eb1f5e4ca6ea2e54241a9a7d",
+      "file": "src/main.adb",
+      "start_line": 13,
+      "end_line": 13,
+      "start_byte": 216,
+      "end_byte": 236,
+      "snippet_hash": "sha256:baff508ee4f7c3d5aa9c9d6884d4b359a6ce6019243db34b37b8a70336d0fa80",
+      "snippet": "Shapes.Draw_All (C);",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:a21b4c2c399883f8f7e3ae5d7213e3b5a53c30f5aeb688898cd91ae0dc73e879",
+      "file": "src/main.adb",
+      "start_line": 14,
+      "end_line": 14,
+      "start_byte": 240,
+      "end_byte": 260,
+      "snippet_hash": "sha256:ade358c9e8cd3b4e7d1526645430293e65c4dcf494b8b90d673612ee64550062",
+      "snippet": "Shapes.Draw_All (Q);",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:c62a373dc27336f3a07b63d8989ccc02c98707ec9e4883ae2d44c532af150fb9",
+      "file": "src/main.adb",
+      "start_line": 15,
+      "end_line": 15,
+      "start_byte": 264,
+      "end_byte": 280,
+      "snippet_hash": "sha256:1065ef47b625a05b39bd1d39a80f9ba3e78a7cf12758e0cb995058cdebc7c20a",
+      "snippet": "Shapes.Draw (C);",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:c4b57802760346efe876f39a8f5688cf27ac75262be73804669b291ddfcf20af",
+      "file": "src/main.adb",
+      "start_line": 16,
+      "end_line": 16,
+      "start_byte": 284,
+      "end_byte": 294,
+      "snippet_hash": "sha256:26d479cd4d834f83310ff6a1d4da14927f40e952689d3871e7449af1fa6c7313",
+      "snippet": "G.Set (Y);",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:f9ac6518cb7f9dd71dd3ba7e6acf6a94193ee20d4ab045c2b3ea30b44dba1db6",
+      "file": "src/shapes.adb",
+      "start_line": 6,
+      "end_line": 6,
+      "start_byte": 88,
+      "end_byte": 102,
+      "snippet_hash": "sha256:5b7e50864acd4e3c2d91bf6eac7fb84d71e5a1779030fdfec20a4b7ef5efb01d",
+      "snippet": "Counters.Bump;",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:beacaeeb98f8b572786db46971190ed94cb9674b244f13ddf3484629a7de0c0f",
+      "file": "src/shapes.adb",
+      "start_line": 13,
+      "end_line": 13,
+      "start_byte": 242,
+      "end_byte": 256,
+      "snippet_hash": "sha256:5b7e50864acd4e3c2d91bf6eac7fb84d71e5a1779030fdfec20a4b7ef5efb01d",
+      "snippet": "Counters.Bump;",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:0068bb61461196a1553c632c986756425f89a19eb054acb43bc37b4af1f30afa",
+      "file": "src/shapes.adb",
+      "start_line": 20,
+      "end_line": 20,
+      "start_byte": 397,
+      "end_byte": 406,
+      "snippet_hash": "sha256:e4c64947f2c7a600d99357183989af1af67d0bef52b4af52b7f8ce397850c1fd",
+      "snippet": "Draw (S);",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    }
+  ],
+  "coverage": [
+    {
+      "file": "src/counters.adb",
+      "status": "FALLBACK_PARSED",
+      "reason": "Ada links are best-guess in this mode."
+    },
+    {
+      "file": "src/counters.ads",
+      "status": "FALLBACK_PARSED",
+      "reason": "Ada links are best-guess in this mode."
+    },
+    {
+      "file": "src/main.adb",
+      "status": "FALLBACK_PARSED",
+      "reason": "Ada links are best-guess in this mode."
+    },
+    {
+      "file": "src/shapes.adb",
+      "status": "FALLBACK_PARSED",
+      "reason": "Ada links are best-guess in this mode."
+    },
+    {
+      "file": "src/shapes.ads",
+      "status": "FALLBACK_PARSED",
+      "reason": "Ada links are best-guess in this mode."
+    }
+  ],
+  "known_gaps": [
+    "Ada links are best-guess in this mode.",
+    "tree-sitter mode: calls are matched by name only; reads/writes not extracted."
+  ]
+}
