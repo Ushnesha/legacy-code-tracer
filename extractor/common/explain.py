@@ -887,7 +887,7 @@ class Explainer:
                 continue
             t = template_summary(self.view, f)
             self._save(f.id, t["short"], t["detailed"], "", "", t["side_effects"], t["mentions"], "template",
-                       sha("template", PROMPT_VERSION, t["short"]), True, [])
+                       sha("template", PROMPT_VERSION, t["short"]), None, [])  # nothing was checked: not "verified"
             self.summaries[f.id] = t["short"]
             self.result.templates += 1
         self.conn.commit()
@@ -901,7 +901,7 @@ class Explainer:
                    role, change_risks_json, business_impact, impact_level, impact_json)
                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (fid, short, detailed, model, h, now(), inputs, outputs, json.dumps(side_effects), json.dumps(mentions),
-             int(verified), json.dumps(reasons), role or None, json.dumps(change_risks or []), business_impact or None,
+             None if verified is None else int(verified), json.dumps(reasons), role or None, json.dumps(change_risks or []), business_impact or None,
              imp.level, json.dumps(imp.as_json(self.view))),
         )
         self.stored_hash[fid] = h

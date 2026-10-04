@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { Direction } from "./api";
 
-export type TabId = "explain" | "code" | "data" | "impact";
+export type TabId = "explain" | "code" | "data" | "impact" | "review";
 export type Theme = "light" | "dark";
 export type Filters = { virtual: boolean; noise: boolean; data: boolean };
 

@@ -87,7 +87,7 @@ CREATE TABLE summaries (
     outputs TEXT,
     side_effects_json TEXT,
     mentions_json TEXT,
-    verified INTEGER,                 -- 1 = every claim checked out against the graph
+    verified INTEGER,                 -- 1 = checked out, 0 = did not, NULL = not checked (templates)
     reasons_json TEXT,                -- why it is not verified
     role TEXT,                        -- its job in the wider program (AI)
     change_risks_json TEXT,           -- what could break if it changes (AI, from the impact facts)
@@ -209,6 +209,8 @@ def migrate(conn: sqlite3.Connection) -> None:
             kind TEXT NOT NULL, key TEXT NOT NULL, short TEXT, detailed TEXT,
             model TEXT, prompt_hash TEXT, created_at TEXT, PRIMARY KEY (kind, key))"""
     )
+    # Template sentences are built from the graph, not checked claims: they are not "verified".
+    conn.execute("UPDATE summaries SET verified = NULL WHERE model = 'template' AND verified IS NOT NULL")
     conn.commit()
 
 
