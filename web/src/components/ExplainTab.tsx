@@ -10,6 +10,7 @@ import { useStore } from "../store";
 import { ErrorNote } from "./ErrorNote";
 import { FnLink } from "./FnLink";
 import { ProgressBar } from "./ProgressBar";
+import { lastPart } from "../lib/names";
 
 type Node = { name: string; container: string | null; file: string; line_start: number; line_end: number; is_entry_point?: boolean };
 
@@ -137,11 +138,11 @@ function ChangeImpact({ s }: { s: SummaryInfo }) {
         {imp && (
           <ul className="text-sm text-muted mt-2 space-y-1">
             {imp.is_entry_point && <li>The program starts here.</li>}
-            {imp.entry_points.length > 0 && <li>Reached from: {andMore(imp.entry_points.map((q) => q.split("::").pop()!), imp.entry_points_total)}</li>}
+            {imp.entry_points.length > 0 && <li>Reached from: {andMore(imp.entry_points.map((q) => lastPart(q)), imp.entry_points_total)}</li>}
             {imp.files_total > 0 && <li>Other files that could be affected: {andMore(imp.files, imp.files_total)}</li>}
             {imp.data_users.map((d) => (
               <li key={d.field}>
-                It changes <span className="mono">{d.field.split("::").pop()}</span>, which {andMore(d.readers.map((q) => q.split("::").pop()!), d.readers_total)}{" "}
+                It changes <span className="mono">{lastPart(d.field)}</span>, which {andMore(d.readers.map((q) => lastPart(q)), d.readers_total)}{" "}
                 {d.readers_total === 1 ? "also reads" : "also read"}.
               </li>
             ))}

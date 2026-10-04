@@ -1,0 +1,964 @@
+{
+  "manifest": {
+    "run_id": "sha256:f63363359a5b57775592219e61d08c00f6c79be75fd63f45fe51175f75cf2011",
+    "repo_path": "demo/fixture",
+    "commit": "5a3c1e0d9b7f4a2e8c6d1b0a9f8e7d6c5b4a3f21",
+    "dirty": false,
+    "variant": "baseline",
+    "defines": [
+      "NAV_MAX_AGE_MS=200",
+      "NAV_VARIANT_A"
+    ],
+    "include_paths": [
+      "src/include"
+    ],
+    "build_context": "PARTIAL",
+    "analyzer_versions": {
+      "clang": "18.1.8",
+      "tree_sitter_c": "0.23.0",
+      "aerotrace_sample": "1"
+    },
+    "created_at": "2026-10-02T20:00:00Z"
+  },
+  "nodes": [
+    {
+      "id": "sha256:f32aeb1dede70a1ceeb1fa6edfc8a462ffbed97b2997146d722106bf8f313b9b",
+      "kind": "Module",
+      "name": "nav",
+      "qualified_name": "nav",
+      "file": null,
+      "start_line": null,
+      "end_line": null,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [],
+      "properties": {
+        "path": "src/nav"
+      }
+    },
+    {
+      "id": "sha256:639e4346e4c3e73da60fa858cbcabb91d55098126b082b195e2ef5da03eab3a5",
+      "kind": "File",
+      "name": "nav_task.c",
+      "qualified_name": "src/nav/nav_task.c",
+      "file": "src/nav/nav_task.c",
+      "start_line": null,
+      "end_line": null,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:4b98e85a8e4eb3ad8d6d5094d315b6bb1a661754b939954199ec4b53c58dde34"
+      ],
+      "properties": {}
+    },
+    {
+      "id": "sha256:2956ce951e7ace5483dc569a749d9b3c31f21123d6c549b206e58532b4f5b7f9",
+      "kind": "File",
+      "name": "nav_msg.c",
+      "qualified_name": "src/nav/nav_msg.c",
+      "file": "src/nav/nav_msg.c",
+      "start_line": null,
+      "end_line": null,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:5db9d461ba6db9f5fca2f76cfe2d3ee19413ed4b3d07d22c6ab7c3045a1b9d34"
+      ],
+      "properties": {}
+    },
+    {
+      "id": "sha256:f10715ee843149cc2da3ce1c25ebb5df2dae360ae7ea0a129e1fed356c11803e",
+      "kind": "File",
+      "name": "nav_state.c",
+      "qualified_name": "src/nav/nav_state.c",
+      "file": "src/nav/nav_state.c",
+      "start_line": null,
+      "end_line": null,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:1f679f1ab878036f7ceae44047ed219932bf45e49b88d094185b126b3844fdeb"
+      ],
+      "properties": {}
+    },
+    {
+      "id": "sha256:a52642a45039d23f791f9b987d2b389c4c6286b93076a5cd5793adef32a7b8aa",
+      "kind": "File",
+      "name": "guidance.c",
+      "qualified_name": "src/guidance/guidance.c",
+      "file": "src/guidance/guidance.c",
+      "start_line": null,
+      "end_line": null,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:ca736d9cd954df42653ff830cffc5a13e27bca5857b7d1899d4994ade75244f3"
+      ],
+      "properties": {}
+    },
+    {
+      "id": "sha256:01fb97957a16a9e0f5927cf0bbcbe53dd61c8543ee544173adbe5680d5a67217",
+      "kind": "File",
+      "name": "display.c",
+      "qualified_name": "src/display/display.c",
+      "file": "src/display/display.c",
+      "start_line": null,
+      "end_line": null,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:67f71af6f4f19953b7b628a8b102cf454021258339e658ffdce46c2a28130027"
+      ],
+      "properties": {}
+    },
+    {
+      "id": "sha256:f29c34f8baa66559cc30ebf60cac3de1a54014713693a4601d4888864295d6f8",
+      "kind": "File",
+      "name": "dispatch.c",
+      "qualified_name": "src/dispatch/dispatch.c",
+      "file": "src/dispatch/dispatch.c",
+      "start_line": null,
+      "end_line": null,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:2ce9da25e180419c07774260f57a174a399160f2d68e432838d2041a8500b432"
+      ],
+      "properties": {}
+    },
+    {
+      "id": "sha256:33a320538bcada5596c3dc9a7ba05e229fecccc55a8ee73dd6152c0cb0f7ba83",
+      "kind": "File",
+      "name": "test_nav_msg.c",
+      "qualified_name": "tests/test_nav_msg.c",
+      "file": "tests/test_nav_msg.c",
+      "start_line": null,
+      "end_line": null,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:3a65b2d7c19903cf6481e54b7f9b16a2a0f5156a7864278fb14d2be1a05059a1"
+      ],
+      "properties": {}
+    },
+    {
+      "id": "sha256:96e3f8e8c18ff90b83b9a0ca0e7071d306b4d722ba0c5b13dee66adb95b89ecd",
+      "kind": "Function",
+      "name": "NavTask_Run",
+      "qualified_name": "NavTask_Run",
+      "file": "src/nav/nav_task.c",
+      "start_line": 20,
+      "end_line": 34,
+      "signature": "void NavTask_Run(void)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:1a3a280fab0fa7aaf151b3b549a058b065f433d4b176597dcafd6749d511115c"
+      ],
+      "properties": {}
+    },
+    {
+      "id": "sha256:fa611c50d76d2e3e2c550e44af9d688c2f7f9c7118d965516692784bbb49aff1",
+      "kind": "Function",
+      "name": "NavMsg_Decode",
+      "qualified_name": "src/nav/nav_msg.c::NavMsg_Decode",
+      "file": "src/nav/nav_msg.c",
+      "start_line": 22,
+      "end_line": 40,
+      "signature": "static void NavMsg_Decode(const uint8_t *raw, nav_msg_t *out)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:8df6a052850829228af70e3028e3c6545f2939d2151b34775242e9e084747cb5"
+      ],
+      "properties": {
+        "static": true
+      }
+    },
+    {
+      "id": "sha256:80c60308f44adec1fcc0d87e73ec9ebe79a22d473883cff722dc779f6a83e19b",
+      "kind": "Function",
+      "name": "NavMsg_IsValid",
+      "qualified_name": "NavMsg_IsValid",
+      "file": "src/nav/nav_msg.c",
+      "start_line": 45,
+      "end_line": 60,
+      "signature": "bool NavMsg_IsValid(const nav_msg_t *msg)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:bbe9ec01af4175d50b4e9fd2e1a9c495df48b7eff4c232dfde35418dd5ea479a"
+      ],
+      "properties": {}
+    },
+    {
+      "id": "sha256:209a7c5bd609a2a783d77d795cbef5eb03301b155e430defa48f4df75d01f12d",
+      "kind": "Function",
+      "name": "NavState_Update",
+      "qualified_name": "NavState_Update",
+      "file": "src/nav/nav_state.c",
+      "start_line": 12,
+      "end_line": 22,
+      "signature": "void NavState_Update(const nav_msg_t *msg)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:1f4164e80022aea5e7628dde26374a9034848dacc7e1e8c329ba3d97d6fd3ba3"
+      ],
+      "properties": {}
+    },
+    {
+      "id": "sha256:bd3e585574cf5c1208be97677a5c208296bd230d6882ec811eaca11b976e6dbc",
+      "kind": "Function",
+      "name": "Guidance_Step",
+      "qualified_name": "Guidance_Step",
+      "file": "src/guidance/guidance.c",
+      "start_line": 35,
+      "end_line": 50,
+      "signature": "void Guidance_Step(void)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:041dd19e64c577389496349c49cd3f4dc58841fdcfdf7b8acfdc3677bba55731"
+      ],
+      "properties": {}
+    },
+    {
+      "id": "sha256:140e793a4b0bdc5bf09cb1f55abe7752bccae52613f5a58e9e91854741469ab4",
+      "kind": "Function",
+      "name": "Display_Refresh",
+      "qualified_name": "Display_Refresh",
+      "file": "src/display/display.c",
+      "start_line": 25,
+      "end_line": 38,
+      "signature": "void Display_Refresh(void)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:29906f6367d5b64319a3292ce246e1c5ce9d76704557fdd9b3409bd7872455ed"
+      ],
+      "properties": {}
+    },
+    {
+      "id": "sha256:b44de9ec1659e5cb0b2f0a02eb805bf2f24cce04f302944a0559a4c28d39a837",
+      "kind": "Function",
+      "name": "Dispatch_Handle",
+      "qualified_name": "Dispatch_Handle",
+      "file": "src/dispatch/dispatch.c",
+      "start_line": 80,
+      "end_line": 98,
+      "signature": "void Dispatch_Handle(msg_ctx_t *ctx)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:877f1f0d1d9c84dd26f3d695d81453254d5aaf9df22aacde423e3f70dedea89b"
+      ],
+      "properties": {}
+    },
+    {
+      "id": "sha256:ca3be4bfced7620d6bdc61073ae69b76cc3a9d0cbb0674ee3ba2c86a1072857b",
+      "kind": "Variable",
+      "name": "g_nav_state",
+      "qualified_name": "g_nav_state",
+      "file": "src/nav/nav_state.c",
+      "start_line": 8,
+      "end_line": 8,
+      "signature": "volatile nav_state_t g_nav_state",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:9ed43e71c788668b62af25c713f947e8670c15bd5427e2857595fae061206b9c"
+      ],
+      "properties": {
+        "volatile": true
+      }
+    },
+    {
+      "id": "sha256:09bc52d222586216f947c2542626f5fce294fad898b7fc8578765a5d7b4f819f",
+      "kind": "Test",
+      "name": "test_NavMsg_IsValid_rejects_stale",
+      "qualified_name": "test_NavMsg_IsValid_rejects_stale",
+      "file": "tests/test_nav_msg.c",
+      "start_line": 25,
+      "end_line": 33,
+      "signature": "void test_NavMsg_IsValid_rejects_stale(void)",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:dc59f463ef9f8faeeecc6ea4d32729a49b8c11f920a91e1ca765947d84d390c3"
+      ],
+      "properties": {
+        "framework": "unity"
+      }
+    },
+    {
+      "id": "sha256:24a043f0a7e2c4141b92527adbd32c9f1a490f9d40c8d9f3ba44d0b0f84cc707",
+      "kind": "ExternalSymbol",
+      "name": "ctx->on_done",
+      "qualified_name": "src/dispatch/dispatch.c:85:ctx->on_done",
+      "file": "src/dispatch/dispatch.c",
+      "start_line": 85,
+      "end_line": 85,
+      "signature": null,
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:fc99eaba81ea7eb27b17bd85b3dc354bd7fc5ae8b3f08702bf5db5fa95a88881"
+      ],
+      "properties": {
+        "reason": "call through function pointer with no resolvable target"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "sha256:f32aeb1dede70a1ceeb1fa6edfc8a462ffbed97b2997146d722106bf8f313b9b",
+      "target": "sha256:639e4346e4c3e73da60fa858cbcabb91d55098126b082b195e2ef5da03eab3a5",
+      "type": "CONTAINS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:4b98e85a8e4eb3ad8d6d5094d315b6bb1a661754b939954199ec4b53c58dde34"
+      ],
+      "properties": {}
+    },
+    {
+      "source": "sha256:f32aeb1dede70a1ceeb1fa6edfc8a462ffbed97b2997146d722106bf8f313b9b",
+      "target": "sha256:2956ce951e7ace5483dc569a749d9b3c31f21123d6c549b206e58532b4f5b7f9",
+      "type": "CONTAINS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:5db9d461ba6db9f5fca2f76cfe2d3ee19413ed4b3d07d22c6ab7c3045a1b9d34"
+      ],
+      "properties": {}
+    },
+    {
+      "source": "sha256:f32aeb1dede70a1ceeb1fa6edfc8a462ffbed97b2997146d722106bf8f313b9b",
+      "target": "sha256:f10715ee843149cc2da3ce1c25ebb5df2dae360ae7ea0a129e1fed356c11803e",
+      "type": "CONTAINS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:1f679f1ab878036f7ceae44047ed219932bf45e49b88d094185b126b3844fdeb"
+      ],
+      "properties": {}
+    },
+    {
+      "source": "sha256:639e4346e4c3e73da60fa858cbcabb91d55098126b082b195e2ef5da03eab3a5",
+      "target": "sha256:96e3f8e8c18ff90b83b9a0ca0e7071d306b4d722ba0c5b13dee66adb95b89ecd",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:1a3a280fab0fa7aaf151b3b549a058b065f433d4b176597dcafd6749d511115c"
+      ],
+      "properties": {}
+    },
+    {
+      "source": "sha256:2956ce951e7ace5483dc569a749d9b3c31f21123d6c549b206e58532b4f5b7f9",
+      "target": "sha256:fa611c50d76d2e3e2c550e44af9d688c2f7f9c7118d965516692784bbb49aff1",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:8df6a052850829228af70e3028e3c6545f2939d2151b34775242e9e084747cb5"
+      ],
+      "properties": {}
+    },
+    {
+      "source": "sha256:2956ce951e7ace5483dc569a749d9b3c31f21123d6c549b206e58532b4f5b7f9",
+      "target": "sha256:80c60308f44adec1fcc0d87e73ec9ebe79a22d473883cff722dc779f6a83e19b",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:bbe9ec01af4175d50b4e9fd2e1a9c495df48b7eff4c232dfde35418dd5ea479a"
+      ],
+      "properties": {}
+    },
+    {
+      "source": "sha256:f10715ee843149cc2da3ce1c25ebb5df2dae360ae7ea0a129e1fed356c11803e",
+      "target": "sha256:209a7c5bd609a2a783d77d795cbef5eb03301b155e430defa48f4df75d01f12d",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:1f4164e80022aea5e7628dde26374a9034848dacc7e1e8c329ba3d97d6fd3ba3"
+      ],
+      "properties": {}
+    },
+    {
+      "source": "sha256:f10715ee843149cc2da3ce1c25ebb5df2dae360ae7ea0a129e1fed356c11803e",
+      "target": "sha256:ca3be4bfced7620d6bdc61073ae69b76cc3a9d0cbb0674ee3ba2c86a1072857b",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:9ed43e71c788668b62af25c713f947e8670c15bd5427e2857595fae061206b9c"
+      ],
+      "properties": {}
+    },
+    {
+      "source": "sha256:a52642a45039d23f791f9b987d2b389c4c6286b93076a5cd5793adef32a7b8aa",
+      "target": "sha256:bd3e585574cf5c1208be97677a5c208296bd230d6882ec811eaca11b976e6dbc",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:041dd19e64c577389496349c49cd3f4dc58841fdcfdf7b8acfdc3677bba55731"
+      ],
+      "properties": {}
+    },
+    {
+      "source": "sha256:01fb97957a16a9e0f5927cf0bbcbe53dd61c8543ee544173adbe5680d5a67217",
+      "target": "sha256:140e793a4b0bdc5bf09cb1f55abe7752bccae52613f5a58e9e91854741469ab4",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:29906f6367d5b64319a3292ce246e1c5ce9d76704557fdd9b3409bd7872455ed"
+      ],
+      "properties": {}
+    },
+    {
+      "source": "sha256:f29c34f8baa66559cc30ebf60cac3de1a54014713693a4601d4888864295d6f8",
+      "target": "sha256:b44de9ec1659e5cb0b2f0a02eb805bf2f24cce04f302944a0559a4c28d39a837",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:877f1f0d1d9c84dd26f3d695d81453254d5aaf9df22aacde423e3f70dedea89b"
+      ],
+      "properties": {}
+    },
+    {
+      "source": "sha256:33a320538bcada5596c3dc9a7ba05e229fecccc55a8ee73dd6152c0cb0f7ba83",
+      "target": "sha256:09bc52d222586216f947c2542626f5fce294fad898b7fc8578765a5d7b4f819f",
+      "type": "DEFINES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:dc59f463ef9f8faeeecc6ea4d32729a49b8c11f920a91e1ca765947d84d390c3"
+      ],
+      "properties": {}
+    },
+    {
+      "source": "sha256:96e3f8e8c18ff90b83b9a0ca0e7071d306b4d722ba0c5b13dee66adb95b89ecd",
+      "target": "sha256:fa611c50d76d2e3e2c550e44af9d688c2f7f9c7118d965516692784bbb49aff1",
+      "type": "CALLS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:98db7f0d619ec32f7c06308fd728aa6e16b449f5c6cf8aac1abb0235926e89db"
+      ],
+      "properties": {
+        "call_site_line": 24,
+        "order": 1
+      }
+    },
+    {
+      "source": "sha256:96e3f8e8c18ff90b83b9a0ca0e7071d306b4d722ba0c5b13dee66adb95b89ecd",
+      "target": "sha256:80c60308f44adec1fcc0d87e73ec9ebe79a22d473883cff722dc779f6a83e19b",
+      "type": "CALLS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:6fedcbef502e4396513f144d26b26eefaec58a04857a03b1e905ca774d31fd2f"
+      ],
+      "properties": {
+        "call_site_line": 25,
+        "order": 2
+      }
+    },
+    {
+      "source": "sha256:96e3f8e8c18ff90b83b9a0ca0e7071d306b4d722ba0c5b13dee66adb95b89ecd",
+      "target": "sha256:209a7c5bd609a2a783d77d795cbef5eb03301b155e430defa48f4df75d01f12d",
+      "type": "CALLS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:c2e649dbb811524cb9d47b182d3f3eec7867bb63318d34aba86b7968a6f50faf"
+      ],
+      "properties": {
+        "call_site_line": 26,
+        "condition": "NavMsg_IsValid(&msg)",
+        "order": 3
+      }
+    },
+    {
+      "source": "sha256:96e3f8e8c18ff90b83b9a0ca0e7071d306b4d722ba0c5b13dee66adb95b89ecd",
+      "target": "sha256:bd3e585574cf5c1208be97677a5c208296bd230d6882ec811eaca11b976e6dbc",
+      "type": "CALLS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:69f16e6fbd0b1dcb60fc26b24c7810d2fb9b40597c6bb2c3e0d7d4fc4ccb3994"
+      ],
+      "properties": {
+        "call_site_line": 29,
+        "order": 4
+      }
+    },
+    {
+      "source": "sha256:bd3e585574cf5c1208be97677a5c208296bd230d6882ec811eaca11b976e6dbc",
+      "target": "sha256:140e793a4b0bdc5bf09cb1f55abe7752bccae52613f5a58e9e91854741469ab4",
+      "type": "CALLS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:fea3da3293c58263bd68dbbd9014b24e5c4034e71729fc6cc3e02bb298bd6027"
+      ],
+      "properties": {
+        "call_site_line": 39,
+        "order": 1
+      }
+    },
+    {
+      "source": "sha256:80c60308f44adec1fcc0d87e73ec9ebe79a22d473883cff722dc779f6a83e19b",
+      "target": "sha256:ca3be4bfced7620d6bdc61073ae69b76cc3a9d0cbb0674ee3ba2c86a1072857b",
+      "type": "READS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:ae492d5fd0cce2c25c183a1267757016400495dffefcdeba2c95c14c1faffed6"
+      ],
+      "properties": {
+        "field": "last_timestamp"
+      }
+    },
+    {
+      "source": "sha256:209a7c5bd609a2a783d77d795cbef5eb03301b155e430defa48f4df75d01f12d",
+      "target": "sha256:ca3be4bfced7620d6bdc61073ae69b76cc3a9d0cbb0674ee3ba2c86a1072857b",
+      "type": "WRITES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:359a4094bc90aa8d0e0ecef609452f26be9d26a10d0e484254a747a1bf4c573a"
+      ],
+      "properties": {
+        "fields": [
+          "position",
+          "last_timestamp"
+        ]
+      }
+    },
+    {
+      "source": "sha256:bd3e585574cf5c1208be97677a5c208296bd230d6882ec811eaca11b976e6dbc",
+      "target": "sha256:ca3be4bfced7620d6bdc61073ae69b76cc3a9d0cbb0674ee3ba2c86a1072857b",
+      "type": "READS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:5369e4d88552a8a15885c9e8965ebe80da64c1e29841daf717311bfb9566f109"
+      ],
+      "properties": {
+        "field": "position"
+      }
+    },
+    {
+      "source": "sha256:140e793a4b0bdc5bf09cb1f55abe7752bccae52613f5a58e9e91854741469ab4",
+      "target": "sha256:ca3be4bfced7620d6bdc61073ae69b76cc3a9d0cbb0674ee3ba2c86a1072857b",
+      "type": "READS",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:120533a85c58db3c48aa22f1d4ef215d4ff8a960e009bcd60414bf65ba292b16"
+      ],
+      "properties": {
+        "field": "position"
+      }
+    },
+    {
+      "source": "sha256:b44de9ec1659e5cb0b2f0a02eb805bf2f24cce04f302944a0559a4c28d39a837",
+      "target": "sha256:96e3f8e8c18ff90b83b9a0ca0e7071d306b4d722ba0c5b13dee66adb95b89ecd",
+      "type": "MAY_CALL",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:a2539f8abe6900a5ce9dbd204e60aa28d5fc84ab46ffd5cf79d50653c98abed8"
+      ],
+      "properties": {
+        "call_site_line": 82,
+        "via": "g_handlers[ctx->id]",
+        "candidates": 1
+      }
+    },
+    {
+      "source": "sha256:b44de9ec1659e5cb0b2f0a02eb805bf2f24cce04f302944a0559a4c28d39a837",
+      "target": "sha256:24a043f0a7e2c4141b92527adbd32c9f1a490f9d40c8d9f3ba44d0b0f84cc707",
+      "type": "UNRESOLVED_CALL",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:fc99eaba81ea7eb27b17bd85b3dc354bd7fc5ae8b3f08702bf5db5fa95a88881"
+      ],
+      "properties": {
+        "call_site_line": 85
+      }
+    },
+    {
+      "source": "sha256:09bc52d222586216f947c2542626f5fce294fad898b7fc8578765a5d7b4f819f",
+      "target": "sha256:80c60308f44adec1fcc0d87e73ec9ebe79a22d473883cff722dc779f6a83e19b",
+      "type": "VERIFIES",
+      "origin": "DETERMINISTIC_ANALYZER",
+      "evidence_ids": [
+        "sha256:d17c92d42064d1d0705948e9a734641451a11f45aa0c262ea3c3fe2cc029f6e1"
+      ],
+      "properties": {}
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "sha256:2ce9da25e180419c07774260f57a174a399160f2d68e432838d2041a8500b432",
+      "file": "src/dispatch/dispatch.c",
+      "start_line": 1,
+      "end_line": 1,
+      "start_byte": 0,
+      "end_byte": 37,
+      "snippet_hash": "sha256:a8fb18d5b85d126b6265bc92e80f49dc34081c46755d728a22728ac6b225fdeb",
+      "snippet": "/* dispatch.c - message dispatcher */",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:877f1f0d1d9c84dd26f3d695d81453254d5aaf9df22aacde423e3f70dedea89b",
+      "file": "src/dispatch/dispatch.c",
+      "start_line": 80,
+      "end_line": 98,
+      "start_byte": 3160,
+      "end_byte": 3287,
+      "snippet_hash": "sha256:3ae38ae60e097685be9344926dce27f7ff0ff4e7122e939d81ed773ccd3ecc82",
+      "snippet": "void Dispatch_Handle(msg_ctx_t *ctx)\n{\n    g_handlers[ctx->id](ctx);\n    if (ctx->on_done) {\n        ctx->on_done(ctx);\n    }\n}",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:a2539f8abe6900a5ce9dbd204e60aa28d5fc84ab46ffd5cf79d50653c98abed8",
+      "file": "src/dispatch/dispatch.c",
+      "start_line": 82,
+      "end_line": 82,
+      "start_byte": 3240,
+      "end_byte": 3265,
+      "snippet_hash": "sha256:27fda18afc6ad885fac20caeb65243e63faff68e7916658a00e55ae2fc4cdc97",
+      "snippet": "g_handlers[ctx->id](ctx);",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:fc99eaba81ea7eb27b17bd85b3dc354bd7fc5ae8b3f08702bf5db5fa95a88881",
+      "file": "src/dispatch/dispatch.c",
+      "start_line": 85,
+      "end_line": 85,
+      "start_byte": 3360,
+      "end_byte": 3378,
+      "snippet_hash": "sha256:b5dab96245fe907106a4391de9443adb102c8f29edf99831343feee40a6954a4",
+      "snippet": "ctx->on_done(ctx);",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:67f71af6f4f19953b7b628a8b102cf454021258339e658ffdce46c2a28130027",
+      "file": "src/display/display.c",
+      "start_line": 1,
+      "end_line": 1,
+      "start_byte": 0,
+      "end_byte": 41,
+      "snippet_hash": "sha256:92454fcd19d9416d71a8e04a624729e42ddbef5e301b43e693785e798aebea55",
+      "snippet": "/* display.c - cockpit display refresh */",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:29906f6367d5b64319a3292ce246e1c5ce9d76704557fdd9b3409bd7872455ed",
+      "file": "src/display/display.c",
+      "start_line": 25,
+      "end_line": 38,
+      "start_byte": 960,
+      "end_byte": 1031,
+      "snippet_hash": "sha256:4916d6fbadd3a4bce13a299fe962121d00ad83e7277c704d6b1731d70560c2e8",
+      "snippet": "void Display_Refresh(void)\n{\n    draw_position(g_nav_state.position);\n}",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:120533a85c58db3c48aa22f1d4ef215d4ff8a960e009bcd60414bf65ba292b16",
+      "file": "src/display/display.c",
+      "start_line": 27,
+      "end_line": 27,
+      "start_byte": 1040,
+      "end_byte": 1076,
+      "snippet_hash": "sha256:be1bcf8e646c3de98dfb84e1bdd67e1b0c69be44ec9b9b3644a1dd44a1fb273e",
+      "snippet": "draw_position(g_nav_state.position);",
+      "analysis_method": "tree_sitter",
+      "quality": "FALLBACK_PARSED"
+    },
+    {
+      "evidence_id": "sha256:ca736d9cd954df42653ff830cffc5a13e27bca5857b7d1899d4994ade75244f3",
+      "file": "src/guidance/guidance.c",
+      "start_line": 1,
+      "end_line": 1,
+      "start_byte": 0,
+      "end_byte": 36,
+      "snippet_hash": "sha256:1fe3046a926340e7c0bbd480b1d6914a505f2457fd51d3c6aa83105f7f2a9186",
+      "snippet": "/* guidance.c - guidance law step */",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:041dd19e64c577389496349c49cd3f4dc58841fdcfdf7b8acfdc3677bba55731",
+      "file": "src/guidance/guidance.c",
+      "start_line": 35,
+      "end_line": 50,
+      "start_byte": 1360,
+      "end_byte": 1469,
+      "snippet_hash": "sha256:ab2e2b5ed378823bceecdcebf33107fbc938da765b5e4f2dffc91c487b223034",
+      "snippet": "void Guidance_Step(void)\n{\n    pos_t p = g_nav_state.position;\n    steer_towards(p);\n    Display_Refresh();\n}",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:5369e4d88552a8a15885c9e8965ebe80da64c1e29841daf717311bfb9566f109",
+      "file": "src/guidance/guidance.c",
+      "start_line": 37,
+      "end_line": 37,
+      "start_byte": 1440,
+      "end_byte": 1471,
+      "snippet_hash": "sha256:248c1aa0605f04c9d096c5942056e61e46776afa0f9adf9e15ca715c72f6e3ff",
+      "snippet": "pos_t p = g_nav_state.position;",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:fea3da3293c58263bd68dbbd9014b24e5c4034e71729fc6cc3e02bb298bd6027",
+      "file": "src/guidance/guidance.c",
+      "start_line": 39,
+      "end_line": 39,
+      "start_byte": 1520,
+      "end_byte": 1538,
+      "snippet_hash": "sha256:9d8bc7c94497b16a1789af30b16bd9a905f045a79bd07ddf748223c2c88805ae",
+      "snippet": "Display_Refresh();",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:5db9d461ba6db9f5fca2f76cfe2d3ee19413ed4b3d07d22c6ab7c3045a1b9d34",
+      "file": "src/nav/nav_msg.c",
+      "start_line": 1,
+      "end_line": 1,
+      "start_byte": 0,
+      "end_byte": 49,
+      "snippet_hash": "sha256:3beaec1782ba244d9dc4dd94ecb834171b9350ba3851e5f53e2970db172ffb5f",
+      "snippet": "/* nav_msg.c - navigation message decode/check */",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:8df6a052850829228af70e3028e3c6545f2939d2151b34775242e9e084747cb5",
+      "file": "src/nav/nav_msg.c",
+      "start_line": 22,
+      "end_line": 40,
+      "start_byte": 840,
+      "end_byte": 976,
+      "snippet_hash": "sha256:312e55c1c87a28f53177abeae782060fd51a2553647e622e7a66f11c0c1dc054",
+      "snippet": "static void NavMsg_Decode(const uint8_t *raw, nav_msg_t *out)\n{\n    out->timestamp = rd_u32(raw);\n    out->position = rd_pos(raw + 4);\n}",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:bbe9ec01af4175d50b4e9fd2e1a9c495df48b7eff4c232dfde35418dd5ea479a",
+      "file": "src/nav/nav_msg.c",
+      "start_line": 45,
+      "end_line": 60,
+      "start_byte": 1760,
+      "end_byte": 1957,
+      "snippet_hash": "sha256:074bd2440d9bbfb1fb7fca15aec56522d9ff07ea7da74006f08a31ed5a0d0713",
+      "snippet": "bool NavMsg_IsValid(const nav_msg_t *msg)\n{\n    if (!msg->valid) {\n        return false;\n    }\n    if (msg->timestamp <= g_nav_state.last_timestamp) {\n        return false;\n    }\n    return true;\n}",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:ae492d5fd0cce2c25c183a1267757016400495dffefcdeba2c95c14c1faffed6",
+      "file": "src/nav/nav_msg.c",
+      "start_line": 52,
+      "end_line": 52,
+      "start_byte": 2040,
+      "end_byte": 2091,
+      "snippet_hash": "sha256:1150de598b1ebc0720612005b0cfc324af4e641ef936210bd26e087d1eb219e5",
+      "snippet": "if (msg->timestamp <= g_nav_state.last_timestamp) {",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:1f679f1ab878036f7ceae44047ed219932bf45e49b88d094185b126b3844fdeb",
+      "file": "src/nav/nav_state.c",
+      "start_line": 1,
+      "end_line": 1,
+      "start_byte": 0,
+      "end_byte": 43,
+      "snippet_hash": "sha256:20230d7fe571017993ba8b6f964a7138ce3fe2e1be0fbd0134d4d6438dec6e74",
+      "snippet": "/* nav_state.c - active navigation state */",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:9ed43e71c788668b62af25c713f947e8670c15bd5427e2857595fae061206b9c",
+      "file": "src/nav/nav_state.c",
+      "start_line": 8,
+      "end_line": 8,
+      "start_byte": 280,
+      "end_byte": 313,
+      "snippet_hash": "sha256:1a51c8a9d8b2c22e893c50c3ee2ff5e08e9e8db0931b51bffbb6053d98bff0ba",
+      "snippet": "volatile nav_state_t g_nav_state;",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:1f4164e80022aea5e7628dde26374a9034848dacc7e1e8c329ba3d97d6fd3ba3",
+      "file": "src/nav/nav_state.c",
+      "start_line": 12,
+      "end_line": 22,
+      "start_byte": 440,
+      "end_byte": 577,
+      "snippet_hash": "sha256:47c87fe940918a4c4be342767a2dc18181fef698fb0dfb428081de32c8070712",
+      "snippet": "void NavState_Update(const nav_msg_t *msg)\n{\n    g_nav_state.position = msg->position;\n    g_nav_state.last_timestamp = msg->timestamp;\n}",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:359a4094bc90aa8d0e0ecef609452f26be9d26a10d0e484254a747a1bf4c573a",
+      "file": "src/nav/nav_state.c",
+      "start_line": 14,
+      "end_line": 15,
+      "start_byte": 520,
+      "end_byte": 606,
+      "snippet_hash": "sha256:eb97b172fe94a49411c5ece7ada90cec44e6975214534597fe0e5fdfda638e88",
+      "snippet": "g_nav_state.position = msg->position;\n    g_nav_state.last_timestamp = msg->timestamp;",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:4b98e85a8e4eb3ad8d6d5094d315b6bb1a661754b939954199ec4b53c58dde34",
+      "file": "src/nav/nav_task.c",
+      "start_line": 1,
+      "end_line": 1,
+      "start_byte": 0,
+      "end_byte": 43,
+      "snippet_hash": "sha256:d04613824cc943aaa16807d12418a60a2168b8d5a0865e0b212765638369f7d7",
+      "snippet": "/* nav_task.c - periodic navigation task */",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:1a3a280fab0fa7aaf151b3b549a058b065f433d4b176597dcafd6749d511115c",
+      "file": "src/nav/nav_task.c",
+      "start_line": 20,
+      "end_line": 34,
+      "start_byte": 760,
+      "end_byte": 926,
+      "snippet_hash": "sha256:ebae07e809eceb412970a73904fa474fea3e820cc071f8224a0c953456fc4760",
+      "snippet": "void NavTask_Run(void)\n{\n    nav_msg_t msg;\n    NavMsg_Decode(&raw, &msg);\n    if (NavMsg_IsValid(&msg)) {\n        NavState_Update(&msg);\n    }\n    Guidance_Step();\n}",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:98db7f0d619ec32f7c06308fd728aa6e16b449f5c6cf8aac1abb0235926e89db",
+      "file": "src/nav/nav_task.c",
+      "start_line": 24,
+      "end_line": 24,
+      "start_byte": 920,
+      "end_byte": 946,
+      "snippet_hash": "sha256:b2d7af07252ba146f0f911745201388d1cfe5632db78be73fe2760e42c549d5c",
+      "snippet": "NavMsg_Decode(&raw, &msg);",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:6fedcbef502e4396513f144d26b26eefaec58a04857a03b1e905ca774d31fd2f",
+      "file": "src/nav/nav_task.c",
+      "start_line": 25,
+      "end_line": 25,
+      "start_byte": 960,
+      "end_byte": 987,
+      "snippet_hash": "sha256:52ab58d56f869bcbc2a5d2643b90f9c6942f4880d5f18bab62dedef0da5c65fe",
+      "snippet": "if (NavMsg_IsValid(&msg)) {",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:c2e649dbb811524cb9d47b182d3f3eec7867bb63318d34aba86b7968a6f50faf",
+      "file": "src/nav/nav_task.c",
+      "start_line": 26,
+      "end_line": 26,
+      "start_byte": 1000,
+      "end_byte": 1022,
+      "snippet_hash": "sha256:1d33ff29377caeb3b9bc00c9faba23b534fc0d78752978c1d20af75581aad682",
+      "snippet": "NavState_Update(&msg);",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:69f16e6fbd0b1dcb60fc26b24c7810d2fb9b40597c6bb2c3e0d7d4fc4ccb3994",
+      "file": "src/nav/nav_task.c",
+      "start_line": 29,
+      "end_line": 29,
+      "start_byte": 1120,
+      "end_byte": 1136,
+      "snippet_hash": "sha256:deda48e94755e608ab21cc5c35cd5c4c0966f0e9c8f66e211693cf5124971b71",
+      "snippet": "Guidance_Step();",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:3a65b2d7c19903cf6481e54b7f9b16a2a0f5156a7864278fb14d2be1a05059a1",
+      "file": "tests/test_nav_msg.c",
+      "start_line": 1,
+      "end_line": 1,
+      "start_byte": 0,
+      "end_byte": 33,
+      "snippet_hash": "sha256:a81f306935d62d6163a48eb4eb6dc1b9830effb98e5e4d5b618a425dcc441362",
+      "snippet": "/* test_nav_msg.c - unit tests */",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:dc59f463ef9f8faeeecc6ea4d32729a49b8c11f920a91e1ca765947d84d390c3",
+      "file": "tests/test_nav_msg.c",
+      "start_line": 25,
+      "end_line": 33,
+      "start_byte": 960,
+      "end_byte": 1059,
+      "snippet_hash": "sha256:67590cf32e6d53e3adb8b6bca730a371f321c765f567da2aff917040fda397b2",
+      "snippet": "void test_NavMsg_IsValid_rejects_stale(void)\n{\n    TEST_ASSERT_FALSE(NavMsg_IsValid(&stale_msg));\n}",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    },
+    {
+      "evidence_id": "sha256:d17c92d42064d1d0705948e9a734641451a11f45aa0c262ea3c3fe2cc029f6e1",
+      "file": "tests/test_nav_msg.c",
+      "start_line": 27,
+      "end_line": 27,
+      "start_byte": 1040,
+      "end_byte": 1086,
+      "snippet_hash": "sha256:55b68d0f0d86f7c3152af7cbc73091ccf4f8b81a577a3dff8a9418ba8e2a5e9e",
+      "snippet": "TEST_ASSERT_FALSE(NavMsg_IsValid(&stale_msg));",
+      "analysis_method": "clang",
+      "quality": "PRECISE"
+    }
+  ],
+  "coverage": [
+    {
+      "file": "src/nav/nav_task.c",
+      "status": "PARSED",
+      "reason": null
+    },
+    {
+      "file": "src/nav/nav_msg.c",
+      "status": "PARSED",
+      "reason": null
+    },
+    {
+      "file": "src/nav/nav_state.c",
+      "status": "PARSED",
+      "reason": null
+    },
+    {
+      "file": "src/guidance/guidance.c",
+      "status": "PARSED",
+      "reason": null
+    },
+    {
+      "file": "src/display/display.c",
+      "status": "FALLBACK_PARSED",
+      "reason": "clang failed: unknown type 'gfx_ctx_t'; parsed with Tree-sitter"
+    },
+    {
+      "file": "src/dispatch/dispatch.c",
+      "status": "PARSED",
+      "reason": null
+    },
+    {
+      "file": "src/nav/nav_gen_tables.c",
+      "status": "FAILED",
+      "reason": "missing header nav_gen.h"
+    },
+    {
+      "file": "tests/test_nav_msg.c",
+      "status": "PARSED",
+      "reason": null
+    }
+  ],
+  "known_gaps": [
+    "unresolved callback at src/dispatch/dispatch.c:85 (ctx->on_done)",
+    "src/dispatch/dispatch.c:82 calls through g_handlers table; target set is a possible, not proven, call",
+    "src/nav/nav_gen_tables.c failed to parse: missing header nav_gen.h",
+    "src/display/display.c parsed with Tree-sitter fallback; its reads/writes are not PRECISE"
+  ]
+}

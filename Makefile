@@ -2,9 +2,11 @@
 
 # Usage examples:
 #   make extract REPO=repos/jsbsim
+#   make extract REPO=repos/ADL EXTRACTOR=ada ARGS="--parser treesitter"
 #   make explain GRAPH=data/jsbsim.graph.json
 REPO ?=
 GRAPH ?=
+EXTRACTOR ?= cpp
 
 setup:
 	uv sync
@@ -12,7 +14,7 @@ setup:
 
 extract:
 	@test -n "$(REPO)" || { echo "usage: make extract REPO=repos/<name>"; exit 1; }
-	uv run python -m extractor.cpp $(REPO) --out data/$(notdir $(REPO)).graph.json
+	uv run python -m extractor.$(EXTRACTOR) $(REPO) --out data/$(notdir $(REPO)).graph.json $(ARGS)
 
 enrich:
 	@test -n "$(REPO)" || { echo "usage: make enrich REPO=repos/<name>"; exit 1; }

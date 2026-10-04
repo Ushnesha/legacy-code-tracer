@@ -12,6 +12,8 @@ dependencies = [
     "pytest",
     "pyyaml>=6.0.3",
     "openai>=3.24.0",
+    "tree-sitter>=0.26.0",
+    "tree-sitter-ada>=0.1.0",
 ]
 
 [tool.uv]
