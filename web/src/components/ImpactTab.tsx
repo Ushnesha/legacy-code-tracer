@@ -1,4 +1,6 @@
-import type { AffectedFn, ImpactResponse } from "../api";
+import { useState } from "react";
+import { api, type AffectedFn, type FunctionDetail, type ImpactResponse } from "../api";
+import { buildReport, download, type ExportFormat } from "../lib/impactExport";
 import { hours, SEVERITY_STYLE, SEVERITY_WORD, type Severity } from "../lib/severity";
 import { plural } from "../lib/util";
 import { useImpact } from "../queries";
@@ -118,6 +120,57 @@ function ByFile({ affected }: { affected: AffectedFn[] }) {
   );
 }
 
+/** Saves the whole impact report, including each function's code and connections, as CSV, HTML or JSON. */
+function DownloadReport({ repo, d }: { repo: string; d: ImpactResponse }) {
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  const save = async (format: ExportFormat) => {
+    setBusy(true);
+    setFailed(false);
+    try {
+      const ids = [d.root.id, ...d.affected.map((a) => a.id)];
+      const details = new Map<string, FunctionDetail>();
+      let next = 0;
+      const worker = async () => {
+        while (next < ids.length) {
+          const id = ids[next++]!;
+          try {
+            details.set(id, await api.fn(repo, id)); // a function whose code can't be loaded is still listed
+          } catch {
+            /* leave it out of the map */
+          }
+        }
+      };
+      await Promise.all(Array.from({ length: 6 }, worker));
+      download(buildReport(repo, d, details), format);
+    } catch {
+      setFailed(true);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="mt-3 flex items-center gap-2 flex-wrap" data-testid="download-report">
+      <span className="text-sm text-muted">{busy ? "Gathering the code…" : "Download report:"}</span>
+      {(["csv", "html", "json"] as const).map((f) => (
+        <button
+          key={f}
+          type="button"
+          disabled={busy}
+          onClick={() => save(f)}
+          className="border border-rule rounded-node bg-panel px-3 py-1 hover:border-ink disabled:opacity-50"
+          data-testid={`download-${f}`}
+        >
+          {f.toUpperCase()}
+        </button>
+      ))}
+      {failed && <span className="text-sm text-writes">Could not build the report. Try again.</span>}
+    </div>
+  );
+}
+
 export function ImpactTab({ repo, id }: { repo: string; id: string }) {
   const q = useImpact(repo, id, 5);
   const drillTo = useStore((s) => s.drillTo);
@@ -142,6 +195,7 @@ export function ImpactTab({ repo, id }: { repo: string; id: string }) {
         </p>
         {q.isError && <ErrorNote error={q.error} what="the impact" onRetry={() => q.refetch()} />}
         {d && <Overview d={d} />}
+        {d && <DownloadReport repo={repo} d={d} />}
         {d && d.affected.length === 0 && <p className="mt-3">Nothing else calls this or reads the data it changes, so changing it won't affect any other function.</p>}
         {d && d.affected.length > 0 && (
           <>
