@@ -1,3 +1,14 @@
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.aws
+credentials.json
+service-account*.json
+.claude
 .venv
 node_modules
 web/node_modules

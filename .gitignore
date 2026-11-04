@@ -1,21 +1,51 @@
+# Local credentials and environment files
+.env
+.env.*
+!.env.example
+!.env.*.example
+.aws/
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+
+# Python environments and caches
 .venv/
+venv/
 __pycache__/
-*.pyc
+*.py[cod]
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# JavaScript dependencies and build output
 node_modules/
 dist/
+*.tsbuildinfo
+.vite/
+coverage/
 
-# generated / cloned data
-# data/*
-!data/.gitkeep
-# repos/*
-!repos/.gitkeep
+# Generated graphs, databases, explanations and downloaded source repositories
+/data/*
+!/data/.gitkeep
+/repos/*
+!/repos/.gitkeep
 
-# web/test-results/
-# web/playwright-report/
+# Browser test artifacts and local demo recordings
+web/test-results/
+web/playwright-report/
+docs/pitch/*.mp4
+docs/pitch/*.webm
+docs/pitch/*.mov
 
+# Local assistant settings and editor/OS files
+.claude/
 .DS_Store
+*.swp
+*.swo
+~$*
 web/openapi.json.bak
-
-# secrets (API keys)
-.env
